@@ -15,6 +15,6 @@
         }
     },
     "include": [
-        "boilerplate-express-project/src/**/*"
+        "src/**/*"
     ]
 }

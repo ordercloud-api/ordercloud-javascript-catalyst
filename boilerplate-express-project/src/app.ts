@@ -1,9 +1,11 @@
-import createError from 'http-errors';
+import 'dotenv/config'
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import checkout from './routes/CheckoutIntegrationEvents';
-var port = 5001;
+import { CatalystGlobalErrorHandler } from './errors/GlobalErrorHandler';
+import { NotFoundError } from './errors/CatalystErrors';
+var port = 3000;
 
 var app = express();
 
@@ -14,21 +16,11 @@ app.use(cookieParser());
 
 app.use('/api/checkout', checkout);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
+// Since this is the last non-error-handling
+// middleware used, we assume 404, as nothing else responded.
+app.use(() => { throw new NotFoundError() });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+app.use(CatalystGlobalErrorHandler);
 
 // start the Express server
 app.listen( port, () => {

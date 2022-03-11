@@ -1,5 +1,6 @@
 import express from 'express';
 import { OrderCalculateResponse, OrderSubmitResponse, ShipEstimateResponse } from 'ordercloud-javascript-sdk';
+import { OrderCloudWebhookAuth } from '../OrderCloudWebhookAuth';
 import { OrderCalculatePayload, MyCheckoutConfig } from '../types/OrderCalculatePayload';
 import { RequestBody } from '../types/RequestBody';
 
@@ -46,6 +47,7 @@ router.post('/ordersubmit', function(
   res, 
   next
 ) {
+  OrderCloudWebhookAuth(req, res);
   var orderSubmit: OrderSubmitResponse = {};
   res.status(200).json(orderSubmit);
 });
