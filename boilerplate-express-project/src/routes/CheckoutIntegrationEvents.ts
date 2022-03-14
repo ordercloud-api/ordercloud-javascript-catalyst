@@ -11,6 +11,7 @@ router.post('/shippingrates', function(
   res, 
   next
 ) {
+  OrderCloudWebhookAuth(req, res);
   var shipEstimates: ShipEstimateResponse = {
     ShipEstimates: [
       {
@@ -36,6 +37,7 @@ router.post('/ordercalculate', function(
   res, 
   next
 ) {
+  OrderCloudWebhookAuth(req, res);
   var orderCalculate: OrderCalculateResponse = {
     TaxTotal: 123.45
   }

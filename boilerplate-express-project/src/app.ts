@@ -5,13 +5,23 @@ import logger from 'morgan';
 import checkout from './routes/CheckoutIntegrationEvents';
 import { CatalystGlobalErrorHandler } from './errors/GlobalErrorHandler';
 import { NotFoundError } from './errors/CatalystErrors';
+import bodyParser from 'body-parser';
+
 var port = 3000;
 
 var app = express();
 
+// This adds the "rawBody" property to all requests, which is needed for webhook auth.
+var rawBodySaver = function (req, res, buf, encoding) {
+  if (buf && buf.length) {
+    req.rawBody = buf.toString(encoding || 'utf8');
+  }
+}
+
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.json({ verify: rawBodySaver}));
+
+app.use(express.urlencoded({ extended: false, verify: rawBodySaver }));
 app.use(cookieParser());
 
 app.use('/api/checkout', checkout);
