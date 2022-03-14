@@ -1,6 +1,6 @@
 {
-  "name": "ordercloud-javascript-catalyst",
-  "version": "1.0.1",
+  "name": "express-js-example",
+  "version": "1.0.0",
   "private": true,
   "main": "dist/app.js",
   "scripts": {
