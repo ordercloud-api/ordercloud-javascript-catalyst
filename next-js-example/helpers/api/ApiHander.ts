@@ -1,5 +1,5 @@
-import { MethodNotAllowedError } from "../../types/CatalystErrors";
-import { CatalystGlobalErrorHandler } from "../../types/GlobalErrorHandler";
+import { MethodNotAllowedError } from "../../lib/CatalystErrors";
+import { CatalystGlobalErrorHandler } from "../../lib/GlobalErrorHandler";
 
 export function apiHandler(handler) {
     return async (req, res) => {
@@ -9,7 +9,7 @@ export function apiHandler(handler) {
             // check handler supports HTTP method
             if (!handler[method])
                 throw new MethodNotAllowedError(req.method);
-                
+
             // route handler
             await handler[method](req, res);
         } catch (err) {

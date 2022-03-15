@@ -1,5 +1,5 @@
-import { WebhookUnauthorizedError } from "./errors/CatalystErrors";
 import CryptoJS from 'crypto-js';
+import { WebhookUnauthorizedError } from './CatalystErrors';
 
 export function OrderCloudWebhookAuth(req) {
     // should match the "HashKey" property configured on the webhook object in OrderCloud. https://ordercloud.io/api-reference/seller/webhooks/create
