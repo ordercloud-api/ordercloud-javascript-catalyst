@@ -5,17 +5,16 @@ import { apiHandler } from '../../../helpers/api/apiHander';
 import { OrderCloudWebhookAuth } from '../../../lib/OrderCloudWebhookAuth';
 
 export default apiHandler({
-    post: OrderCalculate
+    post: OrderCloudWebhookAuth(OrderCalculate)
 });
 
 function OrderCalculate(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  OrderCloudWebhookAuth(req);
-
   var orderCalculate: OrderCalculateResponse = {
     TaxTotal: 123.45
   }
   res.status(200).json(orderCalculate)
 }
+
