@@ -1,8 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
+import { useOCWebhookAuth } from 'ordercloud-javascript-catalyst';
 import { OrderCalculateResponse } from 'ordercloud-javascript-sdk';
 import { apiHandler } from '../../../helpers/api/ApiHander';
-import { useOCWebhookAuth } from '../../../lib/OCWebhookAuth';
 
 export const config = {
   api: {

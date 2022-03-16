@@ -1,7 +1,6 @@
 import { NextApiHandler } from "next"
-import { NotFoundError } from "ordercloud-javascript-catalyst";
+import { useOCWebhookAuth } from "ordercloud-javascript-catalyst";
 import { apiHandler } from "../../../helpers/api/ApiHander"
-import { useOCWebhookAuth } from "../../../lib/OCWebhookAuth";
 
 export const config = {
   api: {
@@ -10,7 +9,6 @@ export const config = {
 }
 
 const ShippingRatesHandler: NextApiHandler = (req, res) => {
-  throw new NotFoundError()
   res.status(200).send("ok")
 }
 

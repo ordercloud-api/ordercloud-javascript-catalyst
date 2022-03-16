@@ -1,8 +1,30 @@
 var crypto = require('crypto-js');
 import getRawBody from 'raw-body';
+import { WebhookUnauthorizedError } from '../Errors/ErrorExtensions';
 
 // Defined globaly by the OrderCloud platform
 const hashHeader = 'x-oc-hash';
+
+// TODO - mess with the type signature, 2 vs 3 parameters.
+export function useOCWebhookAuth(routeHandler: (req, res, next) => void | Promise<void>, hashKey: string | undefined) :
+    (req, res, next) => void | Promise<void>
+{
+    return async function(req, res, next) {
+        var isValid = await isOCHashValid(req, hashKey);
+        if (isValid) {
+            routeHandler(req, res, next);
+        } else {
+            var error = new WebhookUnauthorizedError();
+            if (next) {
+                // next will be defined in an express.js context, pass the error along.
+                next(error);
+            } else {
+                // simply throwing will working in a next.js context where only 2 parameters are defined, req and res.
+                throw error;
+            }
+        }
+    }
+}
 
 export async function isOCHashValid(req, hashKey: string | undefined): Promise<boolean> {
   if (!req.rawBody) {

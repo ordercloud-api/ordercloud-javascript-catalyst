@@ -1,17 +1,22 @@
 import express from 'express';
-import { OrderCalculateResponse, OrderSubmitResponse, ShipEstimateResponse } from 'ordercloud-javascript-sdk';
-import { OrderCloudWebhookAuth } from '../OrderCloudWebhookAuth';
+import { OrderCalculateResponse, OrderSubmitResponse, ShipEstimateResponse,  } from 'ordercloud-javascript-sdk';
+import { useOCWebhookAuth } from 'ordercloud-javascript-catalyst';
 import { OrderCalculatePayload, MyCheckoutConfig } from '../types/OrderCalculatePayload';
 import { RequestBody } from '../types/RequestBody';
 
 var router = express.Router();
 
-router.post('/shippingrates', function(
+router.post('/shippingRates', useOCWebhookAuth(ShippingRatesHandler, process.env.OC_HASH_KEY));
+router.post('/ordercalculate', useOCWebhookAuth(OrderCalculateHandler, process.env.OC_HASH_KEY));
+router.post('/ordersubmit', useOCWebhookAuth(OrderSubmitHandler, process.env.OC_HASH_KEY));
+
+export default router;
+ 
+function ShippingRatesHandler(
   req: RequestBody<OrderCalculatePayload<MyCheckoutConfig>>, 
   res, 
   next
 ) {
-  OrderCloudWebhookAuth(req, res, next, process.env.OC_HASH_KEY);
   var shipEstimates: ShipEstimateResponse = {
     ShipEstimates: [
       {
@@ -30,28 +35,24 @@ router.post('/shippingrates', function(
     ]
   }
   res.status(200).json(shipEstimates);
-});
+}
 
-router.post('/ordercalculate', async function(
+async function OrderCalculateHandler(
   req: RequestBody<OrderCalculatePayload<MyCheckoutConfig>>, 
   res, 
   next
 ) {
-  await OrderCloudWebhookAuth(req, res, next, process.env.OC_HASH_KEY);
   var orderCalculate: OrderCalculateResponse = {
     TaxTotal: 123.45
   }
   res.status(200).json(orderCalculate);
-});
+}
 
-router.post('/ordersubmit', function(
+async function OrderSubmitHandler(
   req: RequestBody<OrderCalculatePayload<MyCheckoutConfig>>, 
   res, 
-  next,
+  next
 ) {
-  OrderCloudWebhookAuth(req, res, next, process.env.OC_HASH_KEY);
   var orderSubmit: OrderSubmitResponse = {};
   res.status(200).json(orderSubmit);
-});
-
-export default router;
+}
