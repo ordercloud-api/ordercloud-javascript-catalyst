@@ -2,10 +2,16 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { OrderCalculateResponse } from 'ordercloud-javascript-sdk';
 import { apiHandler } from '../../../helpers/api/apiHander';
-import { OrderCloudWebhookAuth } from '../../../lib/OrderCloudWebhookAuth';
+import { useOCWebhookAuth } from '../../../lib/OCWebhookAuth';
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+}
 
 export default apiHandler({
-    post: OrderCloudWebhookAuth(OrderCalculate)
+    post: useOCWebhookAuth(OrderCalculate)
 });
 
 function OrderCalculate(

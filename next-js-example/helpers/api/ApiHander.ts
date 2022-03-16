@@ -13,6 +13,7 @@ export function apiHandler(handler) {
             // route handler
             await handler[method](req, res);
         } catch (err) {
+            console.log("inside catch block")
             CatalystGlobalErrorHandler(err, res);
         }
     }
