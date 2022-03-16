@@ -11,10 +11,10 @@ export const config = {
 }
 
 export default apiHandler({
-    post: useOCWebhookAuth(OrderCalculate)
+    post: useOCWebhookAuth(orderCalculateHandler, process.env.OC_HASH_KEY)
 });
 
-function OrderCalculate(
+function orderCalculateHandler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {

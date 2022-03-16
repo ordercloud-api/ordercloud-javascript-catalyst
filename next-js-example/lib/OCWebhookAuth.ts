@@ -4,10 +4,8 @@ import { WebhookUnauthorizedError } from './CatalystErrors';
 
 // Defined globaly by the OrderCloud platform
 const hashHeader = "x-oc-hash";
-// Implementation-specific secret. Configured on the "HashKey" property of a webhook object https://ordercloud.io/api-reference/seller/webhooks/create
-const hashKey = process.env.OC_HASH_KEY;
 
-export function useOCWebhookAuth(next: (req: NextApiRequest, res: NextApiResponse) => void | Promise<void>) {
+export function useOCWebhookAuth(next: (req: NextApiRequest, res: NextApiResponse) => void | Promise<void>, hashKey: string | undefined) {
     return async function(req: NextApiRequest, res: NextApiResponse) { 
         addRawBody(req);
         if (isOCHashValid(req)) {
