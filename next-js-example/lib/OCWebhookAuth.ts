@@ -1,43 +1,36 @@
 import CryptoJS from 'crypto-js';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { WebhookUnauthorizedError } from './CatalystErrors';
+import { WebhookUnauthorizedError } from './CatalystErrors'
+import getRawBody from 'raw-body';
 
 // Defined globaly by the OrderCloud platform
-const hashHeader = "x-oc-hash";
+const hashHeader = 'x-oc-hash';
 
-export function useOCWebhookAuth(next: (req: NextApiRequest, res: NextApiResponse) => void | Promise<void>, hashKey: string | undefined) {
-    return async function(req: NextApiRequest, res: NextApiResponse) { 
-        addRawBody(req);
-        if (isOCHashValid(req)) {
-            next(req, res);
-        } else {
-            throw new WebhookUnauthorizedError();
-        }
-    }
+export function useOCWebhookAuth(routeHandler: (req: NextApiRequest, res: NextApiResponse) => void | Promise<void>, hashKey?: string): any {
+  return async function(req: NextApiRequest, res: NextApiResponse) {
+    var isValid = await isOCHashValid(req, hashKey);
+    if (isValid) {
+      routeHandler(req, res);
+    } else {
+      throw new WebhookUnauthorizedError();
+    } 
+  }
 }
 
-function isOCHashValid(req): boolean {
-    var hashedMessage = req?.headers && req.headers[hashHeader];
-    var message = req.body;
+export async function isOCHashValid(req: NextApiRequest, hashKey: string | undefined): Promise<boolean> {
+  let buffer = await getRawBody(req);
+  let rawBody = buffer.toString();
+  const sent = Array.isArray(req.headers[hashHeader])
+    ? req.headers[hashHeader][0]
+    : req.headers[hashHeader]
 
-    if (!hashKey || !hashedMessage) {
-        return false;
-    }
 
-    var sha256 = CryptoJS.HmacSHA256(message, hashKey);
-    var hashedMessageExpected = CryptoJS.enc.Base64.stringify(sha256);
+  if (!hashKey || !sent) {
+    return false;
+  }
 
-    return hashedMessage == hashedMessageExpected;
-}
-
-function addRawBody(req): void {
-    let buf = ''
-    req.setEncoding('utf8')
-    req.on('data', (chunk) => {
-        buf += chunk
-    })
-    req.on('end', () => {
-        req.rawBody = buf
-        req.body = JSON.parse(Buffer.from(req.rawBody).toString())
-    })
+  var sha256 = CryptoJS.HmacSHA256(rawBody, hashKey);
+  var hash = CryptoJS.enc.Base64.stringify(sha256);
+  
+  return hash === sent;
 }
