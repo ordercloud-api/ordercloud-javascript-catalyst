@@ -1,5 +1,4 @@
-import { MethodNotAllowedError } from "../../lib/CatalystErrors";
-import { CatalystGlobalErrorHandler } from "../../lib/GlobalErrorHandler";
+import { CatalystGlobalErrorHandler, MethodNotAllowedError } from "ordercloud-javascript-catalyst";
 
 export function apiHandler(handler) {
     return async (req, res) => {
@@ -13,7 +12,6 @@ export function apiHandler(handler) {
             // route handler
             await handler[method](req, res);
         } catch (err) {
-            console.log("inside catch block")
             CatalystGlobalErrorHandler(err, res);
         }
     }

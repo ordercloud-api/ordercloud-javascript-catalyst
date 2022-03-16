@@ -3,17 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "preinstall": "cd ../lib && npm run build",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "crypto-js": "^4.1.1",
-    "http-status-codes": "^2.2.0",
     "next": "12.1.0",
+    "ordercloud-javascript-catalyst": "file:../lib",
     "ordercloud-javascript-sdk": "^4.4.4",
-    "raw-body": "^2.5.1",
     "react": "17.0.2",
     "react-dom": "17.0.2"
   },

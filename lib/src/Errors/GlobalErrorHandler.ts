@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { ApiErrorBody, CatalystBaseError } from "./CatalystErrors";
+import { ApiErrorBody, CatalystBaseError } from "./ErrorExtensions";
 
 export function CatalystGlobalErrorHandler(err, res) {
     var body: ApiErrorBody = {

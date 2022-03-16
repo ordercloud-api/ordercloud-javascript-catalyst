@@ -1,6 +1,6 @@
 import { NextApiHandler } from "next"
+import { NotFoundError } from "ordercloud-javascript-catalyst";
 import { apiHandler } from "../../../helpers/api/ApiHander"
-import { NotFoundError } from "../../../lib/CatalystErrors"
 import { useOCWebhookAuth } from "../../../lib/OCWebhookAuth";
 
 export const config = {

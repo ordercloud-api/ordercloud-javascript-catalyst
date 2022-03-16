@@ -11,7 +11,7 @@ router.post('/shippingrates', function(
   res, 
   next
 ) {
-  OrderCloudWebhookAuth(req);
+  OrderCloudWebhookAuth(req, res, next, process.env.OC_HASH_KEY);
   var shipEstimates: ShipEstimateResponse = {
     ShipEstimates: [
       {
@@ -32,12 +32,12 @@ router.post('/shippingrates', function(
   res.status(200).json(shipEstimates);
 });
 
-router.post('/ordercalculate', function(
+router.post('/ordercalculate', async function(
   req: RequestBody<OrderCalculatePayload<MyCheckoutConfig>>, 
   res, 
   next
 ) {
-  OrderCloudWebhookAuth(req);
+  await OrderCloudWebhookAuth(req, res, next, process.env.OC_HASH_KEY);
   var orderCalculate: OrderCalculateResponse = {
     TaxTotal: 123.45
   }
@@ -47,9 +47,9 @@ router.post('/ordercalculate', function(
 router.post('/ordersubmit', function(
   req: RequestBody<OrderCalculatePayload<MyCheckoutConfig>>, 
   res, 
-  next
+  next,
 ) {
-  OrderCloudWebhookAuth(req);
+  OrderCloudWebhookAuth(req, res, next, process.env.OC_HASH_KEY);
   var orderSubmit: OrderSubmitResponse = {};
   res.status(200).json(orderSubmit);
 });

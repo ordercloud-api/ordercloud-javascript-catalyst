@@ -3,9 +3,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import checkout from './routes/CheckoutIntegrationEvents';
-import { CatalystGlobalErrorHandler } from './errors/GlobalErrorHandler';
-import { NotFoundError } from './errors/CatalystErrors';
-import bodyParser from 'body-parser';
+import { CatalystGlobalErrorHandler, NotFoundError } from 'ordercloud-javascript-catalyst';
 
 var port = 3000;
 
@@ -30,7 +28,7 @@ app.use('/api/checkout', checkout);
 // middleware used, we assume 404, as nothing else responded.
 app.use(() => { throw new NotFoundError() });
 
-app.use(CatalystGlobalErrorHandler);
+app.use((err, req, res, next) => CatalystGlobalErrorHandler(err, res));
 
 // start the Express server
 app.listen( port, () => {
