@@ -18,10 +18,10 @@ async function shippingRatesHandler(req, res, next) {
 
 }
 ```
-#### next.js example
+#### Full next.js example
 [./next-js-example/pages/api/checkout/ordercalculate.ts](./next-js-example/pages/api/checkout/ordercalculate.ts)
 
-#### express.js example 
+#### Full express.js example 
 [./express-js-example/src/checkoutIntegrationRoutes.ts](./express-js-example/src/checkoutIntegrationRoutes.ts)
 
 
