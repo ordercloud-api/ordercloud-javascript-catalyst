@@ -26,6 +26,6 @@ async function shippingRatesHandler(req, res, next) {
 
 
 ## User Authnetication
-Use OrderCloud's user authnetication to protect routes in your own API.
+Use Ordercloud's authentication scheme in your own APIs.
 
 Coming soon...
