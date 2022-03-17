@@ -2,11 +2,12 @@ import 'dotenv/config'
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
-import checkout from './routes/CheckoutIntegrationEvents';
+import checkout from './checkoutIntegrationRoutes';
 import { CatalystGlobalErrorHandler, NotFoundError } from 'ordercloud-javascript-catalyst';
 
-var port = 3000;
+// This file sets up the express server.
 
+var port = 3000;
 var app = express();
 
 // This adds the "rawBody" property to all requests, which is needed for webhook auth.
@@ -28,6 +29,7 @@ app.use('/api/checkout', checkout);
 // middleware used, we assume 404, as nothing else responded.
 app.use(() => { throw new NotFoundError() });
 
+// Global error handling. Converts thrown Error objects into standardized json repsonses. 
 app.use((err, req, res, next) => CatalystGlobalErrorHandler(err, res));
 
 // start the Express server

@@ -1,13 +1,14 @@
+import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 import { CatalystGlobalErrorHandler, MethodNotAllowedError } from "ordercloud-javascript-catalyst";
 
 export function apiHandler(handler) {
-    return async (req, res) => {
+    return async (req: NextApiRequest, res: NextApiResponse) => {
         try {
-            const method = req.method.toLowerCase();
+            const method = req?.method?.toLowerCase() ?? "null";
 
             // check handler supports HTTP method
             if (!handler[method])
-                throw new MethodNotAllowedError(req.method);
+                throw new MethodNotAllowedError(method);
 
             // route handler
             await handler[method](req, res);
@@ -15,4 +16,8 @@ export function apiHandler(handler) {
             CatalystGlobalErrorHandler(err, res);
         }
     }
+}
+
+export interface NextApiRequestTyped<T> extends NextApiRequest {
+    body: T;
 }

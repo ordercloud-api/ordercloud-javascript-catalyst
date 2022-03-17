@@ -1,25 +1,30 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
-import { useOCWebhookAuth } from 'ordercloud-javascript-catalyst';
+import { useOCWebhookAuth, OrderCalculatePayload } from 'ordercloud-javascript-catalyst';
+import type { NextApiRequest, NextApiResponse } from 'next'
 import { OrderCalculateResponse } from 'ordercloud-javascript-sdk';
-import { apiHandler } from '../../../helpers/api/ApiHander';
+import { apiHandler, NextApiRequestTyped } from '../../../helpers/ApiHander';
 
+// apiHandler verifies the http method and provides global error handling.
+export default apiHandler({
+  // useOCWebhookAuth is a middleware that executes before the route handler.
+  // It verifies the request header "x-oc-hash" matches the provided hashKey.
+  post: useOCWebhookAuth(orderCalculateHandler, process.env.OC_HASH_KEY)
+});
+
+// Exporting this config allows access the raw, unparsed http body, which is needed for hash validation.
+// useOCWebhookAuth will populate req.body with the parsed body object so it can be used in the route handler.
 export const config = {
   api: {
     bodyParser: false,
   },
 }
 
-const orderCalculateHandler: NextApiHandler = (req, res) => {
-  
-  var orderCalculate: OrderCalculateResponse = {
-    TaxTotal: 123.45
-  }
-  res.status(200).json(orderCalculate)
+// Route handler
+function orderCalculateHandler(
+  req: NextApiRequestTyped<OrderCalculatePayload>, 
+  res: NextApiResponse<OrderCalculateResponse>
+): void | Promise<void> {
+  // Put your custom order calculate logic here.
+  res.status(200).json({ TaxTotal: 123.45 })
 }
-
-export default apiHandler({
-  post: useOCWebhookAuth(orderCalculateHandler, process.env.OC_HASH_KEY)
-});
 
 
