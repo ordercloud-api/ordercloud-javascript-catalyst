@@ -19,10 +19,10 @@ async function shippingRatesHandler(req, res, next) {
 }
 ```
 #### next.js example
-[./next-js-example/pages/api/checkout/ordercalculate.ts](./next-js-example/pages/api/checkout/ordercalculate.ts)
+[./examples/next-js//pages/api/checkout/ordercalculate.ts](./examples/next-js/pages/api/checkout/ordercalculate.ts)
 
 #### express.js example 
-[./express-js-example/src/checkoutIntegrationRoutes.ts](./express-js-example/src/checkoutIntegrationRoutes.ts)
+[./examples/express-js/src/checkoutIntegrationRoutes.ts](./examples/express-js/src/checkoutIntegrationRoutes.ts)
 
 
 ## User Authentication
