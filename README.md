@@ -25,7 +25,7 @@ async function shippingRatesHandler(req, res, next) {
 [./express-js-example/src/checkoutIntegrationRoutes.ts](./express-js-example/src/checkoutIntegrationRoutes.ts)
 
 
-## User Authnetication
+## User Authentication
 Use Ordercloud's authentication scheme in your own APIs.
 
 Coming soon...
