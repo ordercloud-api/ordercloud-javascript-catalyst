@@ -14,9 +14,7 @@ router.post('api/checkout/shippingRates',
   useOCWebhookAuth(shippingRatesHandler, process.env.OC_HASH_KEY)
 );
 
-async function shippingRatesHandler(req, res, next) {  
-
-}
+async function shippingRatesHandler(req, res, next) {  }
 ```
 #### Full next.js example
 [./examples/next-js/pages/api/checkout/ordercalculate.ts](./examples/next-js/pages/api/checkout/ordercalculate.ts)
