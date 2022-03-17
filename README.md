@@ -4,6 +4,7 @@ Node JS starter middleware, extensions, and tools to get developers running with
 ## Webhook Verification
 Protect your webhook routes by blocking requests that are not from OrderCloud. 
 
+#### Usage
 ```js
 import { useOCWebhookAuth } from 'ordercloud-javascript-catalyst';
 
@@ -17,9 +18,12 @@ async function shippingRatesHandler(req, res, next) {
 
 }
 ```
+#### next.js example
+[./next-js-example/pages/api/checkout/ordercalculate.ts](./next-js-example/pages/api/checkout/ordercalculate.ts)
 
-[See full express.js example](./express-js-example/src/checkoutIntegrationRoutes.ts)
-[See full next.js example](./next-js-example/pages/api/checkout/ordercalculate.ts)
+#### express.js example 
+[./express-js-example/src/checkoutIntegrationRoutes.ts](./express-js-example/src/checkoutIntegrationRoutes.ts)
+
 
 ## User Authnetication
 Use OrderCloud's user authnetication to protect routes in your own API.
