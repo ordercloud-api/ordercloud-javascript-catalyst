@@ -18,12 +18,11 @@ async function shippingRatesHandler(req, res, next) {
 
 }
 ```
-#### next.js example
+#### Full next.js example
 [./examples/next-js//pages/api/checkout/ordercalculate.ts](./examples/next-js/pages/api/checkout/ordercalculate.ts)
 
-#### express.js example 
+#### Full express.js example 
 [./examples/express-js/src/checkoutIntegrationRoutes.ts](./examples/express-js/src/checkoutIntegrationRoutes.ts)
-
 
 ## User Authentication
 Use Ordercloud's authentication scheme in your own APIs.
