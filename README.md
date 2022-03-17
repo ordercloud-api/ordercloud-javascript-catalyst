@@ -8,24 +8,16 @@ Protect your webhook routes by blocking requests that are not from OrderCloud.
 ```js
 import { useOCWebhookAuth } from 'ordercloud-javascript-catalyst';
 
-router.post('/shippingRates', 
+router.post('api/checkout/shippingRates', 
   // useOCWebhookAuth is a middleware that executes before the route handler.
   // It verifies the request header "x-oc-hash" matches the provided hashKey.
   useOCWebhookAuth(shippingRatesHandler, process.env.OC_HASH_KEY)
 );
 
-async function shippingRatesHandler(req, res, next) {  
-
-}
+async function shippingRatesHandler(req, res, next) {  }
 ```
-#### next.js example
-[./next-js-example/pages/api/checkout/ordercalculate.ts](./next-js-example/pages/api/checkout/ordercalculate.ts)
+#### Full next.js example
+[./examples/next-js/pages/api/checkout/ordercalculate.ts](./examples/next-js/pages/api/checkout/ordercalculate.ts)
 
-#### express.js example 
-[./express-js-example/src/checkoutIntegrationRoutes.ts](./express-js-example/src/checkoutIntegrationRoutes.ts)
-
-
-## User Authnetication
-Use OrderCloud's user authnetication to protect routes in your own API.
-
-Coming soon...
+#### Full express.js example 
+[./examples/express-js/src/checkoutIntegrationRoutes.ts](./examples/express-js/src/checkoutIntegrationRoutes.ts)
