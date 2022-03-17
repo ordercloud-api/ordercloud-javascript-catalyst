@@ -32,6 +32,16 @@ export class WebhookUnauthorizedError extends CatalystBaseError {
     }
 }
 
+export class UnauthorizedException extends CatalystBaseError {
+    constructor() {
+        super(
+            "InvalidToken",
+            `Access token is invalid or expired.`,
+            StatusCodes.UNAUTHORIZED
+        )
+    }
+}
+
 export class NotFoundError extends CatalystBaseError {
     constructor() {
         super(

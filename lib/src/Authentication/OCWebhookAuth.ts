@@ -3,7 +3,7 @@ import getRawBody from 'raw-body';
 import { WebhookUnauthorizedError } from '../Errors/ErrorExtensions';
 
 // Defined globaly by the OrderCloud platform
-const hashHeader = 'x-oc-hash';
+const xOcHashHeader = 'x-oc-hash';
 
 // TODO - mess with the type signature, 2 vs 3 parameters.
 export function useOCWebhookAuth(routeHandler: (req, res, next) => void | Promise<void>, hashKey: string | undefined) :
@@ -33,17 +33,20 @@ export async function isOCHashValid(req, hashKey: string | undefined): Promise<b
     req.body = JSON.parse(req.rawBody);
   }
 
-  const sent = Array.isArray(req.headers[hashHeader])
-    ? req.headers[hashHeader][0]
-    : req.headers[hashHeader]
+  const expectedHash = getHeader(req, xOcHashHeader)
 
-
-  if (!hashKey || !sent) {
+  if (!hashKey || !expectedHash) {
     return false;
   }
 
   var sha256 = crypto.HmacSHA256(req.rawBody, hashKey);
   var hash = crypto.enc.Base64.stringify(sha256);
   
-  return hash === sent;
+  return hash === expectedHash;
+}
+
+export function getHeader(req, headerName: string): string | null {
+  return Array.isArray(req.headers[headerName])
+    ? req.headers[headerName][0]
+    : req.headers[headerName];
 }
