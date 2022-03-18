@@ -1,17 +1,17 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next"
-import { OrderCalculatePayload, useOCWebhookAuth } from "ordercloud-javascript-catalyst";
+import { OrderCalculatePayload, withOCWebhookAuth } from "ordercloud-javascript-catalyst";
 import { ShipEstimateResponse } from "ordercloud-javascript-sdk";
 import { apiHandler, NextApiRequestTyped } from "../../../helpers/ApiHander"
 
 // apiHandler verifies the http method and provides global error handling.
 export default apiHandler({
-  // useOCWebhookAuth is a middleware that executes before the route handler.
+  // withOCWebhookAuth is a middleware that executes before the route handler.
   // It verifies the request header "x-oc-hash" matches the provided hashKey.
-  post: useOCWebhookAuth(shippingRatesHandler, process.env.OC_HASH_KEY)
+  post: withOCWebhookAuth(shippingRatesHandler, process.env.OC_HASH_KEY)
 });
 
 // Exporting this config allows access the raw, unparsed http body, which is needed for hash validation.
-// useOCWebhookAuth will populate req.body with the parsed body object so it can be used in the route handler.
+// withOCWebhookAuth will populate req.body with the parsed body object so it can be used in the route handler.
 export const config = {
   api: {
     bodyParser: false,

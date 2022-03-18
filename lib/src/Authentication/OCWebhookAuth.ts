@@ -6,7 +6,7 @@ import { WebhookUnauthorizedError } from '../Errors/ErrorExtensions';
 const hashHeader = 'x-oc-hash';
 
 // TODO - mess with the type signature, 2 vs 3 parameters.
-export function useOCWebhookAuth(routeHandler: (req, res, next) => void | Promise<void>, hashKey: string | undefined) :
+export function withOCWebhookAuth(routeHandler: (req, res, next) => void | Promise<void>, hashKey: string | undefined) :
     (req, res, next) => void | Promise<void>
 {
     return async function(req, res, next) {
