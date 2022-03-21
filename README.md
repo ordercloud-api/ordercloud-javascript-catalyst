@@ -10,6 +10,7 @@ import { withOCWebhookAuth } from 'ordercloud-javascript-catalyst';
 
 router.post('api/checkout/shippingRates', 
   // Verifies that the request header "x-oc-hash" is valid given a key of process.env.OC_WEBHOOK_HASH_KEY.
+  // Can also provide a string as a second argument here. 
   withOCWebhookAuth(shippingRatesHandler)
 );
 ```
