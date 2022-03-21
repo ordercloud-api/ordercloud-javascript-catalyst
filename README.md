@@ -31,6 +31,7 @@ export class CardTypeNotAcceptedError extends CatalystBaseError {
     }
 }
 ...
+
 if (!acceptedCardTypes.includes(type)) {
   throw new CardTypeNotAcceptedError(type);
 }
