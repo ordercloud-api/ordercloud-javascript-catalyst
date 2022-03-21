@@ -1,23 +1,33 @@
 # ordercloud-javascript-catalyst
-Node JS starter middleware, extensions, and tools to get developers running with OrderCloud faster.
+Starter middleware, extensions, and tools for building APIs when working with OrderCloud.
 
 ## Webhook Verification
-Protect your webhook routes by blocking requests that are not from OrderCloud. 
+Protect your webhook routes by blocking requests that are not from OrderCloud. [**next.js** example](./examples/next-js/pages/api/checkout/ordercalculate.ts#L10)  [**express.js** example](./examples/express-js/src/checkoutIntegrationRoutes.ts#L14)
 
 #### Usage
 ```js
-import { useOCWebhookAuth } from 'ordercloud-javascript-catalyst';
+import { withOCWebhookAuth } from 'ordercloud-javascript-catalyst';
 
 router.post('api/checkout/shippingRates', 
-  // useOCWebhookAuth is a middleware that executes before the route handler.
-  // It verifies the request header "x-oc-hash" matches the provided hashKey.
-  useOCWebhookAuth(shippingRatesHandler, process.env.OC_HASH_KEY)
+  // Verifies that the request header "x-oc-hash" matches process.env.OC_WEBHOOK_HASH_KEY.
+  withOCWebhookAuth(shippingRatesHandler)
 );
-
-async function shippingRatesHandler(req, res, next) {  }
 ```
-#### Full next.js example
-[./examples/next-js/pages/api/checkout/ordercalculate.ts](./examples/next-js/pages/api/checkout/ordercalculate.ts)
+## Error Repsonses
+Standardize error response json to match ordercloud. [**next.js** example](./examples/next-js/helpers/ApiHander.ts#L16)  [**express.js** example](./examples/express-js/src/app.ts#L33)
 
-#### Full express.js example 
-[./examples/express-js/src/checkoutIntegrationRoutes.ts](./examples/express-js/src/checkoutIntegrationRoutes.ts)
+#### Usage
+```js
+export class CardTypeNotAcceptedError extends CatalystBaseError {
+    constructor(type: string) {
+        super("CardTypeNotAccepted", `This merchant does not accept ${type} type credit cards`, 400)
+    }
+}
+...
+if (!acceptedCardTypes.includes(type)) {
+  throw new CardTypeNotAcceptedError(type);
+}
+```
+
+
+
