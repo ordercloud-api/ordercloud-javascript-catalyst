@@ -4,9 +4,16 @@ import { WebhookUnauthorizedError } from '../Errors/ErrorExtensions';
 
 // Defined globaly by the OrderCloud platform
 const hashHeader = 'x-oc-hash';
+// A convention defined by this project.
+const defaultConfigName = 'OC_WEBHOOK_HASH_KEY';
 
-// TODO - mess with the type signature, 2 vs 3 parameters.
-export function withOCWebhookAuth(routeHandler: (req, res, next) => void | Promise<void>, hashKey: string | undefined) :
+/**
+ * @description A middleware that executes before a route handler. Verifies the request header "x-oc-hash" matches the configured hash key.
+ * @param {Function} routeHandler A function to handle the request and response.
+ * @param {string} hashKey Optional. If not provided, defaults to process.env.OC_WEBHOOK_HASH_KEY.
+ * @returns {Function} A function to handle the request and response.
+ */
+export function withOCWebhookAuth(routeHandler: (req, res, next) => void | Promise<void>, hashKey: string | undefined = process.env[defaultConfigName]) :
     (req, res, next) => void | Promise<void>
 {
     return async function(req, res, next) {
@@ -26,7 +33,12 @@ export function withOCWebhookAuth(routeHandler: (req, res, next) => void | Promi
     }
 }
 
-export async function isOCHashValid(req, hashKey: string | undefined): Promise<boolean> {
+/**
+ * @description Does the request header "x-oc-hash" match the configured hash key?
+ * @param {Function} req The request object, including body and headers.
+ * @param {string} hashKey Optional. If not provided, defaults to process.env.OC_WEBHOOK_HASH_KEY.
+ */
+export async function isOCHashValid(req, hashKey: string | undefined = process.env[defaultConfigName]): Promise<boolean> {
   if (!req.rawBody) {
     const buffer = await getRawBody(req);
     req.rawBody = buffer.toString();

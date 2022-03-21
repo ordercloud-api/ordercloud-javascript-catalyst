@@ -7,7 +7,7 @@ import { apiHandler, NextApiRequestTyped } from '../../../helpers/ApiHander';
 export default apiHandler({
   // withOCWebhookAuth is a middleware that executes before the route handler.
   // It verifies the request header "x-oc-hash" matches the provided hashKey.
-  post: withOCWebhookAuth(orderCalculateHandler, process.env.OC_HASH_KEY)
+  post: withOCWebhookAuth(orderCalculateHandler, process.env.OC_WEBHOOK_HASH_KEY)
 });
 
 // Exporting this config allows access the raw, unparsed http body, which is needed for hash validation.

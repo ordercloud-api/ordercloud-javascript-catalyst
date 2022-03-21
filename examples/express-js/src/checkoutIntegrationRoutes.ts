@@ -11,13 +11,14 @@ var router = express.Router();
 router.post('/shippingRates', 
   // withOCWebhookAuth is a middleware that executes before the route handler.
   // It verifies the request header "x-oc-hash" matches the provided hashKey.
-  withOCWebhookAuth(shippingRatesHandler, process.env.OC_HASH_KEY)
+  withOCWebhookAuth(shippingRatesHandler, process.env.OC_WEBHOOK_HASH_KEY)
 );
 router.post('/ordercalculate', 
-  withOCWebhookAuth(orderCalculateHandler, process.env.OC_HASH_KEY)
+  // If a hashKey parameter is not included, it uses the value of process.env.OC_WEBHOOK_HASH_KEY
+  withOCWebhookAuth(orderCalculateHandler)
 );
 router.post('/ordersubmit', 
-  withOCWebhookAuth(orderSubmitHandler, process.env.OC_HASH_KEY)
+  withOCWebhookAuth(orderSubmitHandler, process.env.OC_WEBHOOK_HASH_KEY)
 );
 
 export default router;

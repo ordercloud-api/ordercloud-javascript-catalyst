@@ -26,7 +26,7 @@ export class WebhookUnauthorizedError extends CatalystBaseError {
     constructor() {
         super(
             "Unauthorized",
-            "X-oc-hash header does not align with process.env.OC_HASH_KEY. Endpoint can only be hit from a valid OrderCloud webhook.",
+            "X-oc-hash header does not match the configured hash key. Endpoint can only be hit from a valid OrderCloud webhook.",
             StatusCodes.UNAUTHORIZED
         )
     }

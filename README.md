@@ -9,9 +9,8 @@ Protect your webhook routes by blocking requests that are not from OrderCloud. [
 import { withOCWebhookAuth } from 'ordercloud-javascript-catalyst';
 
 router.post('api/checkout/shippingRates', 
-  // withOCWebhookAuth is a middleware that executes before the route handler.
-  // It verifies the request header "x-oc-hash" matches the provided hashKey.
-  withOCWebhookAuth(shippingRatesHandler, process.env.OC_HASH_KEY)
+  // Verifies that the request header "x-oc-hash" matches process.env.OC_WEBHOOK_HASH_KEY.
+  withOCWebhookAuth(shippingRatesHandler)
 );
 ```
 ## Error Repsonses
