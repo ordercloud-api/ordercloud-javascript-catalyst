@@ -13,5 +13,22 @@ router.post('api/checkout/shippingRates',
   // It verifies the request header "x-oc-hash" matches the provided hashKey.
   withOCWebhookAuth(shippingRatesHandler, process.env.OC_HASH_KEY)
 );
+```
+## Error Repsonses
+Standardize error response json to match ordercloud. [**next.js** example](./examples/next-js/helpers/ApiHander.ts#L10)  [**express.js** example](./examples/express-js/src/app.ts)
+
+#### Usage
+```js
+export class CardTypeNotAcceptedError extends CatalystBaseError {
+    constructor(type: string) {
+        super("CardTypeNotAccepted", `This merchant does not accept ${type} type credit cards`, 400)
+    }
+}
+...
+if (!acceptedCardTypes.includes(type)) {
+  throw new CardTypeNotAcceptedError(type);
+}
+```
+
 
 

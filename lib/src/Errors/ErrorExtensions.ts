@@ -7,7 +7,7 @@ export interface ApiErrorBody {
 export interface ApiError {
     ErrorCode: string;
     Message: string,
-    data?: any
+    Data?: any
 }
 
 export class CatalystBaseError extends Error {
