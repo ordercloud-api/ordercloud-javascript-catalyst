@@ -1,5 +1,5 @@
 # ordercloud-javascript-catalyst
-Node JS starter middleware, extensions, and tools to get developers running with OrderCloud faster.
+Starter middleware, extensions, and tools for building APIs when working with OrderCloud.
 
 ## Webhook Verification
 Protect your webhook routes by blocking requests that are not from OrderCloud. [**next.js** example](./examples/next-js/pages/api/checkout/ordercalculate.ts#L10)  [**express.js** example](./examples/express-js/src/checkoutIntegrationRoutes.ts#L14)
