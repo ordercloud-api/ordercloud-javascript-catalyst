@@ -13,8 +13,8 @@ router.post('api/checkout/shippingRates',
   withOCWebhookAuth(shippingRatesHandler)
 );
 
-// Can also provide a raw string here. 
-router.post('api/checkout/shippingRates', 
+router.post('api/webhooks/submitorder', 
+  // Can also provide a raw string here. 
   withOCWebhookAuth(shippingRatesHandler, 'my-secret-hash-key')
 );
 ```
