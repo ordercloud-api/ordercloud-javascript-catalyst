@@ -2,7 +2,7 @@
 Node JS starter middleware, extensions, and tools to get developers running with OrderCloud faster.
 
 ## Webhook Verification
-Protect your webhook routes by blocking requests that are not from OrderCloud. [Full next.js example](./examples/next-js/pages/api/checkout/ordercalculate.ts). #### [Full express.js example](./examples/express-js/src/checkoutIntegrationRoutes.ts)
+Protect your webhook routes by blocking requests that are not from OrderCloud. **[next.js example]**(./examples/next-js/pages/api/checkout/ordercalculate.ts). **[express.js example]**(./examples/express-js/src/checkoutIntegrationRoutes.ts)
 
 #### Usage
 ```js
