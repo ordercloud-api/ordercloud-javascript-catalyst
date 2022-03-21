@@ -2,10 +2,18 @@ import { DecodedToken } from "ordercloud-javascript-sdk";
 import { UnauthorizedException } from "../Errors/ErrorExtensions";
 import { getHeader } from "./OCWebhookAuth";
 
+/**
+ * @description Get the OrderCloud OAuth json web token from the request as a decoded object.
+ * @param {Function} req The request object.
+ */
 export function getDecodedToken(req): DecodedToken {
     return parseJwt(getToken(req));
 }
 
+/**
+ * @description Get the OrderCloud OAuth json web token from the request as a raw string.
+ * @param {Function} req The request object.
+ */
 export function getToken(req): string {
     var authHeader = getHeader(req, "Authorization");
     if (!authHeader) return null;
@@ -21,7 +29,8 @@ export function getToken(req): string {
 
 // taken from https://github.com/ordercloud-api/ordercloud-javascript-sdk/blob/a72b0d0a86effcc3c26800d7ecd25beaffcc995b/src/utils/ParseJwt.ts
 // would be nice to not have duplicate functionality if this could be public.
-export function parseJwt(token: string): DecodedToken {
+// not exposed publically.
+function parseJwt(token: string): DecodedToken {
     try {
       const base64Url = token.split('.')[1]
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
