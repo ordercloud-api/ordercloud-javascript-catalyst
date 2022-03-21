@@ -13,9 +13,9 @@ router.post('api/checkout/shippingRates',
   withOCWebhookAuth(shippingRatesHandler)
 );
 
-router.post('api/webhooks/submitorder', 
+router.post('api/webhooks/createaddress', 
   // Can also provide a raw string here. 
-  withOCWebhookAuth(shippingRatesHandler, 'my-secret-hash-key')
+  withOCWebhookAuth(createAddressHandler, 'my-secret-hash-key')
 );
 ```
 ## Error Repsonses
