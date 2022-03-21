@@ -23,6 +23,8 @@ Standardize error response json to match ordercloud. [**next.js** example](./exa
 
 #### Usage
 ```js
+import { CatalystBaseError } from 'ordercloud-javascript-catalyst';
+
 export class CardTypeNotAcceptedError extends CatalystBaseError {
     constructor(type: string) {
         super("CardTypeNotAccepted", `This merchant does not accept ${type} type credit cards`, 400)
