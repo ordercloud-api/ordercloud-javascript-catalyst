@@ -12,10 +12,12 @@ router.post('api/checkout/shippingRates',
   withOCWebhookAuth(shippingRatesHandler)
 );
 
-router.post('api/webhooks/createaddress', 
+router.post('api/webhooks/shippingRates', 
   // Can also provide a raw string here. 
-  withOCWebhookAuth(createAddressHandler, 'my-secret-hash-key')
+  withOCWebhookAuth(shippingRatesHandler, 'my-secret-hash-key')
 );
+
+function shippingRatesHandler(req, res, next) { }
 ```
 ## Error Repsonses
 Standardize error response json to match ordercloud. [**next.js** example](./examples/next-js/helpers/ApiHander.ts#L16)  [**express.js** example](./examples/express-js/src/app.ts#L33)
