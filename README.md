@@ -15,7 +15,7 @@ router.post('api/checkout/shippingRates',
 );
 ```
 ## Error Repsonses
-Standardize error response json to match ordercloud. [**next.js** example](./examples/next-js/helpers/ApiHander.ts#L10)  [**express.js** example](./examples/express-js/src/app.ts)
+Standardize error response json to match ordercloud. [**next.js** example](./examples/next-js/helpers/ApiHander.ts#L16)  [**express.js** example](./examples/express-js/src/app.ts#L33)
 
 #### Usage
 ```js
