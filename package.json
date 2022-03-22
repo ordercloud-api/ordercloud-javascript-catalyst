@@ -1,14 +1,15 @@
 {
-  "name": "ordercloud-javascript-catalyst",
-  "version": "1.0.1",
-  "description": "Javascript server-side auth, extensions, and tools to get developers running with OrderCloud faster.",
+  "name": "@ordercloud/catalyst",
+  "version": "1.0.2",
+  "description": "Starter middleware, extensions, and tools for building APIs when working with OrderCloud.",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "rollup --config"
+    "build": "rollup --config",
+    "pub": "npm publish --access public"
   },
-  "repository": "https://github.com/oliverheywood451/ordercloud-javascript-catalyst",
+  "repository": "https://github.com/ordercloud-api/ordercloud-javascript-catalyst",
   "author": "Oliver Heywood",
   "license": "ISC",
   "devDependencies": {

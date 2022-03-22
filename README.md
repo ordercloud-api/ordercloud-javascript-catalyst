@@ -1,11 +1,16 @@
 # ordercloud-javascript-catalyst
 Starter middleware, extensions, and tools for building APIs when working with OrderCloud.
 
+## Installation
+```
+npm i @ordercloud/catalyst
+```
+
 ## Webhook Verification
 Protect your webhook routes by blocking requests that are not from OrderCloud. [**next.js** example](./examples/next-js/pages/api/checkout/ordercalculate.ts#L10)  [**express.js** example](./examples/express-js/src/checkoutIntegrationRoutes.ts#L14)
 
 ```js
-import { withOCWebhookAuth } from 'ordercloud-javascript-catalyst';
+import { withOCWebhookAuth } from '@ordercloud/catalyst';
 
 router.post('api/checkout/shippingRates', 
   // Verifies that the request header "x-oc-hash" is valid given a key of process.env.OC_WEBHOOK_HASH_KEY.
@@ -23,7 +28,7 @@ function shippingRatesHandler(req, res, next) { }
 Standardize error response json to match ordercloud. [**next.js** example](./examples/next-js/helpers/ApiHander.ts#L16)  [**express.js** example](./examples/express-js/src/app.ts#L33)
 
 ```js
-import { CatalystBaseError } from 'ordercloud-javascript-catalyst';
+import { CatalystBaseError } from '@ordercloud/catalyst';
 
 export class CardTypeNotAcceptedError extends CatalystBaseError {
     constructor(type: string) {

@@ -1,4 +1,4 @@
-import { withOCWebhookAuth, OrderCalculatePayload } from 'ordercloud-javascript-catalyst';
+import { withOCWebhookAuth, OrderCalculatePayload } from '@ordercloud/catalyst';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { OrderCalculateResponse } from 'ordercloud-javascript-sdk';
 import { apiHandler, NextApiRequestTyped } from '../../../helpers/ApiHander';

@@ -3,7 +3,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import checkout from './checkoutIntegrationRoutes';
-import { CatalystGlobalErrorHandler, NotFoundError } from 'ordercloud-javascript-catalyst';
+import { catalystGlobalErrorHandler, NotFoundError } from '@ordercloud/catalyst';
 
 // This file sets up the express server.
 
@@ -30,7 +30,7 @@ app.use('/api/checkout', checkout);
 app.use(() => { throw new NotFoundError() });
 
 // Global error handling. Converts thrown Error objects into standardized json repsonses. 
-app.use((err, req, res, next) => CatalystGlobalErrorHandler(err, res));
+app.use((err, req, res, next) => catalystGlobalErrorHandler(err, res));
 
 // start the Express server
 app.listen( port, () => {

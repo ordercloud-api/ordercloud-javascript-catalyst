@@ -1,5 +1,5 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
-import { CatalystGlobalErrorHandler, MethodNotAllowedError } from "ordercloud-javascript-catalyst";
+import { catalystGlobalErrorHandler, MethodNotAllowedError } from "@ordercloud/catalyst";
 
 export function apiHandler(handler) {
     return async (req: NextApiRequest, res: NextApiResponse) => {
@@ -13,7 +13,7 @@ export function apiHandler(handler) {
             // route handler
             await handler[method](req, res);
         } catch (err) {
-            CatalystGlobalErrorHandler(err, res);
+            catalystGlobalErrorHandler(err, res);
         }
     }
 }

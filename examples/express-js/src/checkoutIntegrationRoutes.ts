@@ -1,6 +1,6 @@
 import express from 'express';
 import { OrderCalculateResponse, OrderSubmitResponse, ShipEstimateResponse,  } from 'ordercloud-javascript-sdk';
-import { withOCWebhookAuth, OrderCalculatePayload } from 'ordercloud-javascript-catalyst';
+import { withOCWebhookAuth, OrderCalculatePayload } from '@ordercloud/catalyst';
 
 export interface RequestBody<T> extends Express.Request {
   body: T
