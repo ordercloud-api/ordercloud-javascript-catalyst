@@ -7,6 +7,7 @@ export function withOCUserAuth(routeHandler: (req, res, next) => void | Promise<
 { 
   return async function(req, res, next) {
     var token = getToken(req);
+    console.log(token);
     var error = await verifyTokenAsync(token, requiredRoles);
     if (error instanceof Error) {
       throwError(error, next);  
@@ -47,11 +48,17 @@ export async function verifyTokenAsync(token: string, requiredRoles: string[] = 
   }
 
   var now = getTimestampUTC();
-  if (decodedToken.nbf < now && decodedToken.exp > now) {
+
+  if (decodedToken.nbf > now || now > decodedToken.exp) {
       return new UnauthorizedError();
   }
 
+  console.log(3);
+
+
   var baseUrl = Configuration.Get().baseApiUrl;
+  console.log("base", baseUrl);
+  console.log("aud", decodedToken.aud);
   if (baseUrl !== decodedToken.aud) {
       return new WrongEnvironmentError({
         TokenIssuerEnvironment: decodedToken.aud,
@@ -59,10 +66,16 @@ export async function verifyTokenAsync(token: string, requiredRoles: string[] = 
       });
   }
 
+  console.log(4);
+
+
   var isValid = await verifyTokenWithMeGet(token);
   if (!isValid) {
       return new UnauthorizedError();
   }
+
+  console.log(5);;
+
 
   if (requiredRoles?.length && !requiredRoles.some(role => decodedToken.role.includes(role as any))) {
       return new InsufficientRolesError({
@@ -70,6 +83,9 @@ export async function verifyTokenAsync(token: string, requiredRoles: string[] = 
           AssignedRoles: decodedToken.role as any
       })
   }
+
+  console.log(6);
+
 
   return decodedToken; 
 }
