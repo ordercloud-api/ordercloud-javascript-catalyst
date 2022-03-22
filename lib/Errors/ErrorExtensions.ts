@@ -32,7 +32,7 @@ export class WebhookUnauthorizedError extends CatalystBaseError {
     }
 }
 
-export class UnauthorizedException extends CatalystBaseError {
+export class UnauthorizedError extends CatalystBaseError {
     constructor() {
         super(
             "InvalidToken",
@@ -58,6 +58,55 @@ export class MethodNotAllowedError extends CatalystBaseError {
             "MethodNotAllowed",
             `Method ${method} Not Allowed`,
             StatusCodes.METHOD_NOT_ALLOWED
+        )
+    }
+}
+
+export interface InsufficientRolesData
+{
+    SufficientRoles: string[];
+    AssignedRoles: string[];
+}
+
+export class InsufficientRolesError extends CatalystBaseError {
+    constructor(data: InsufficientRolesData) {
+        super(
+            "InsufficientRoles",
+            "User does not have role(s) required to perform this action.",
+            StatusCodes.FORBIDDEN,
+            data
+        )
+    }
+}
+
+export interface InvalidUserTypeData {
+    ThisUserType: string;
+    UserTypesThatCanAccess: string[];
+}
+
+export class InvalidUserTypeError extends CatalystBaseError {
+    constructor(data: InvalidUserTypeData) {
+        super(
+            "InvalidUserType",
+            `Users of type ${data.ThisUserType} do not have permission to perform this action.`,
+            StatusCodes.FORBIDDEN,
+            data
+        )
+    }
+}
+
+export interface WrongEnvironmentData {
+    TokenIssuerEnvironment: string;
+    ExpectedEnvironment: string;
+}
+
+export class WrongEnvironmentError extends CatalystBaseError {
+    constructor(data: WrongEnvironmentData) {
+        super(
+            "InvalidToken",
+            `Environment mismatch. Token gives access to ${data.TokenIssuerEnvironment} while this API expects ${data.ExpectedEnvironment}`,
+            StatusCodes.UNAUTHORIZED,
+            data
         )
     }
 }

@@ -1,4 +1,5 @@
 import { StatusCodes } from "http-status-codes";
+import { OrderCloudError } from "ordercloud-javascript-sdk";
 import { ApiErrorBody, CatalystBaseError } from "./ErrorExtensions";
 
 export function catalystGlobalErrorHandler(err, res) {
@@ -11,6 +12,8 @@ export function catalystGlobalErrorHandler(err, res) {
             Message: err.message,
             Data: err.data,
         };
+    } else if (err instanceof OrderCloudError || err.isOrderCloudError) {
+        body = err.errors;
     } else {
         body.Errors[0] = {
             ErrorCode: "InternalServerError",

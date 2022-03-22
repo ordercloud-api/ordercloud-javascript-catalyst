@@ -21,14 +21,7 @@ export function withOCWebhookAuth(routeHandler: (req, res, next) => void | Promi
         if (isValid) {
             routeHandler(req, res, next);
         } else {
-            var error = new WebhookUnauthorizedError();
-            if (next) {
-                // next will be defined in an express.js context, pass the error along.
-                next(error);
-            } else {
-                // simply throwing will working in a next.js context where only 2 parameters are defined, req and res.
-                throw error;
-            }
+            throwError(new WebhookUnauthorizedError(), next);  
         }
     }
 }
@@ -55,6 +48,14 @@ export async function isOCHashValid(req, hashKey: string | undefined = process.e
   var hash = crypto.enc.Base64.stringify(sha256);
   
   return hash === expectedHash;
+}
+
+export function throwError(error: Error, next: Function) {
+  if (next) {
+    next(error)
+  } else {
+    throw error;
+  }
 }
 
 export function getHeader(req, headerName: string): string | null {
