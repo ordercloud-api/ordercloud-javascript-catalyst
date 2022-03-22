@@ -3,7 +3,7 @@ Starter middleware, extensions, and tools for building APIs when working with Or
 
 ## Installation
 ```
-npm i @ordercloud/catalyst
+npm install @ordercloud/catalyst
 ```
 
 ## Webhook Verification
@@ -24,9 +24,21 @@ router.post('api/webhooks/shippingRates',
 
 function shippingRatesHandler(req, res, next) { }
 ```
-## Error Repsonses
-Standardize error response json to match ordercloud. [**next.js** example](./examples/next-js/helpers/ApiHander.ts#L16)  [**express.js** example](./examples/express-js/src/app.ts#L33)
+## Error Responses
+Standardize error response json to match ordercloud. 
 
+First, install the API handler. Implementation varies based on framework:
+* In Next.js - [wrap your handler logic](https://github.com/ordercloud-api/ordercloud-javascript-catalyst/blob/main/examples/next-js/pages/api/checkout/ordercalculate.ts#L7) with our higher level function
+* In Express - [add our middleware](https://github.com/ordercloud-api/ordercloud-javascript-catalyst/blob/main/examples/express-js/src/app.ts#L33)
+
+Then, in your endpoint you can throw the `CatalystBaseError` error:
+```js
+if (!acceptedCardTypes.includes(type)) {
+  throw new CatalystBaseError("CardTypeNotAccepted", `This merchant does not accept ${type} type credit cards`, 400);
+}
+```
+
+Or, extend the base error to make it even easier to use. This is useful for common errors:
 ```js
 import { CatalystBaseError } from '@ordercloud/catalyst';
 
@@ -35,7 +47,6 @@ export class CardTypeNotAcceptedError extends CatalystBaseError {
         super("CardTypeNotAccepted", `This merchant does not accept ${type} type credit cards`, 400)
     }
 }
-...
 
 if (!acceptedCardTypes.includes(type)) {
   throw new CardTypeNotAcceptedError(type);
