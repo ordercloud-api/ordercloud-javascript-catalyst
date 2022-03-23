@@ -1,0 +1,1 @@
+export type ApiHander = (req: any, res: any, next?: any) => void | Promise<void>;
