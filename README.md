@@ -10,16 +10,16 @@ npm i @ordercloud/catalyst
 Protect your webhook routes by blocking requests that are not from OrderCloud. [**next.js** example](./examples/next-js/pages/api/checkout/ordercalculate.ts#L10)  [**express.js** example](./examples/express-js/src/checkoutIntegrationRoutes.ts#L14)
 
 ```js
-import { withOCWebhookAuth } from '@ordercloud/catalyst';
+import { withOcWebhookAuth } from '@ordercloud/catalyst';
 
 router.post('api/checkout/shippingRates', 
   // Verifies that the request header "x-oc-hash" is valid given the secret key.
-  withOCWebhookAuth(shippingRatesHandler, 'my-secret-hash-key')
+  withOcWebhookAuth(shippingRatesHandler, 'my-secret-hash-key')
 );
 
 router.post('api/webhooks/shippingRates', 
   // Key parameter is optional and defaults to process.env.OC_WEBHOOK_HASH_KEY. 
-  withOCWebhookAuth(shippingRatesHandler)
+  withOcWebhookAuth(shippingRatesHandler)
 );
 
 function shippingRatesHandler(req, res, next) { }
