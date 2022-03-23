@@ -1,6 +1,6 @@
 {
   "name": "@ordercloud/catalyst",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Starter middleware, extensions, and tools for building APIs when working with OrderCloud.",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",

@@ -1,6 +1,6 @@
 import express from 'express';
 import { OrderCalculateResponse, OrderSubmitResponse, ShipEstimateResponse,  } from 'ordercloud-javascript-sdk';
-import { withOCWebhookAuth, OrderCalculatePayload } from '@ordercloud/catalyst';
+import { withOcWebhookAuth, OrderCalculatePayload } from '@ordercloud/catalyst';
 
 export interface RequestBody<T> extends Express.Request {
   body: T
@@ -11,14 +11,14 @@ var router = express.Router();
 router.post('/shippingRates', 
   // withOCWebhookAuth is a middleware that executes before the route handler.
   // It verifies the request header "x-oc-hash" matches the provided hashKey.
-  withOCWebhookAuth(shippingRatesHandler, process.env.OC_WEBHOOK_HASH_KEY)
+  withOcWebhookAuth(shippingRatesHandler, process.env.OC_WEBHOOK_HASH_KEY)
 );
 router.post('/ordercalculate', 
   // If a hashKey parameter is not included, it uses the value of process.env.OC_WEBHOOK_HASH_KEY
-  withOCWebhookAuth(orderCalculateHandler)
+  withOcWebhookAuth(orderCalculateHandler)
 );
 router.post('/ordersubmit', 
-  withOCWebhookAuth(orderSubmitHandler, process.env.OC_WEBHOOK_HASH_KEY)
+  withOcWebhookAuth(orderSubmitHandler, process.env.OC_WEBHOOK_HASH_KEY)
 );
 
 export default router;

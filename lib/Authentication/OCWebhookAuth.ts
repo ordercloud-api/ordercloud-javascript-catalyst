@@ -1,6 +1,7 @@
 var crypto = require('crypto-js');
 import getRawBody from 'raw-body';
 import { WebhookUnauthorizedError } from '../Errors/ErrorExtensions';
+import { ApiHander } from '../Types/ApiHandler';
 
 // Defined globaly by the OrderCloud platform
 const hashHeader = 'x-oc-hash';
@@ -13,13 +14,12 @@ const defaultConfigName = 'OC_WEBHOOK_HASH_KEY';
  * @param {string} hashKey Optional. If not provided, defaults to process.env.OC_WEBHOOK_HASH_KEY.
  * @returns {Function} A function to handle the request and response.
  */
-export function withOCWebhookAuth(routeHandler: (req, res, next) => void | Promise<void>, hashKey: string | undefined = process.env[defaultConfigName]) :
-    (req, res, next) => void | Promise<void>
+export function withOcWebhookAuth(routeHandler: ApiHander, hashKey: string | undefined = process.env[defaultConfigName]) : ApiHander
 {
     return async function(req, res, next) {
-        var isValid = await isOCHashValid(req, hashKey);
+        var isValid = await isOcHashValid(req, hashKey);
         if (isValid) {
-            routeHandler(req, res, next);
+            await routeHandler(req, res, next);
         } else {
             var error = new WebhookUnauthorizedError();
             if (next) {
@@ -38,8 +38,11 @@ export function withOCWebhookAuth(routeHandler: (req, res, next) => void | Promi
  * @param {Function} req The request object, including body and headers.
  * @param {string} hashKey Optional. If not provided, defaults to process.env.OC_WEBHOOK_HASH_KEY.
  */
-export async function isOCHashValid(req, hashKey: string | undefined = process.env[defaultConfigName]): Promise<boolean> {
+export async function isOcHashValid(req, hashKey: string | undefined = process.env[defaultConfigName]): Promise<boolean> {
   if (!req.rawBody) {
+    // TODO - is there a way to get the body without using promises? 
+    // Because making this function syncronous would mean many other downstream functions could be synchronous,
+    // including middleware's clients want to use.
     const buffer = await getRawBody(req);
     req.rawBody = buffer.toString();
     req.body = JSON.parse(req.rawBody);

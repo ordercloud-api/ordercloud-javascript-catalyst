@@ -13,19 +13,19 @@ Protect your webhook routes by blocking requests that are not from OrderCloud. [
 import { withOCWebhookAuth } from '@ordercloud/catalyst';
 
 router.post('api/checkout/shippingRates', 
-  // Verifies that the request header "x-oc-hash" is valid given a key of process.env.OC_WEBHOOK_HASH_KEY.
-  withOCWebhookAuth(shippingRatesHandler)
+  // Verifies that the request header "x-oc-hash" is valid given the secret key.
+  withOCWebhookAuth(shippingRatesHandler, 'my-secret-hash-key')
 );
 
 router.post('api/webhooks/shippingRates', 
-  // Can also provide a raw string here. 
-  withOCWebhookAuth(shippingRatesHandler, 'my-secret-hash-key')
+  // Key parameter is optional and defaults to process.env.OC_WEBHOOK_HASH_KEY. 
+  withOCWebhookAuth(shippingRatesHandler, )
 );
 
 function shippingRatesHandler(req, res, next) { }
 ```
 ## Error Repsonses
-Standardize error response json to match ordercloud. [**next.js** example](./examples/next-js/helpers/ApiHander.ts#L16)  [**express.js** example](./examples/express-js/src/app.ts#L33)
+Standardize error response json to match ordercloud. [**next.js** example](./examples/next-js/pages/api/checkout/ordercalculate.ts/ts#L8)  [**express.js** example](./examples/express-js/src/app.ts#L33)
 
 ```js
 import { CatalystBaseError } from '@ordercloud/catalyst';
