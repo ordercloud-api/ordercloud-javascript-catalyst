@@ -27,7 +27,7 @@ router.post('api/webhooks/shippingRates',
 function shippingRatesHandler(req, res, next) { }
 ```
 ## Error Handling
-Create custom errors that will result in JSON responses in OrderCloud's format. [**next.js** example](./examples/next-js/pages/api/checkout/ordercalculate.ts#L8)  [**express.js** example](./examples/express-js/src/app.ts#L33)
+Create custom errors that will result in JSON responses matching OrderCloud's format. [**next.js** example](./examples/next-js/pages/api/checkout/ordercalculate.ts#L8)  [**express.js** example](./examples/express-js/src/app.ts#L33)
 
 #### Usage
 
