@@ -19,7 +19,7 @@ router.post('api/checkout/shippingRates',
 
 router.post('api/webhooks/shippingRates', 
   // Key parameter is optional and defaults to process.env.OC_WEBHOOK_HASH_KEY. 
-  withOCWebhookAuth(shippingRatesHandler, )
+  withOCWebhookAuth(shippingRatesHandler)
 );
 
 function shippingRatesHandler(req, res, next) { }
