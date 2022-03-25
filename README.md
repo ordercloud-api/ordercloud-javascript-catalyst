@@ -42,7 +42,7 @@ router.post('api/checkout/payment',
 function createPaymentHandler(req, res, next) { ... }
 
 router.get('api/me',
-  // rolesWithAccess parameter and typesWithAccess parameter are optional. This will give access to any active OC token.
+  // The permissions parameters are optional. This will give access to any active OC token.
   withOcUserAuth(getMeHandler)
 )
 
