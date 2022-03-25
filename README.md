@@ -9,7 +9,7 @@ npm i @ordercloud/catalyst
 ## Webhook Verification
 Protect your webhook API routes by blocking requests that are not from OrderCloud. 
 
-[**next.js** example](./examples/next-js/pages/api/checkout/ordercalculate.ts#L10)  
+[**next.js** example](./examples/next-js/pages/api/checkout/ordercalculate.ts#L8)  
 
 [**express.js** example](./examples/express-js/src/checkoutIntegrationRoutes.ts#L14)
 
