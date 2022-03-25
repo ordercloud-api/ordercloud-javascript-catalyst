@@ -59,8 +59,6 @@ function createPaymentHandler(req, res, next) {
 router.get('api/me', withOcUserAuth(getMeHandler));
 ```
 
-=======
->>>>>>> main
 ## Error Handling
 Create custom errors that will result in JSON responses matching OrderCloud's format. 
 
