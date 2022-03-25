@@ -37,7 +37,7 @@ Protect your API routes by using OrderCloud's user authentication - require an O
 
 [**next.js** example](./examples/next-js/pages/api/user.ts#L14)  
 
-[**express.js** example](./examples/express-js/src/getUser.ts#L10)
+[**express.js** example](./examples/express-js/src/GetUser.ts#L10)
 
 #### Usage 
 
