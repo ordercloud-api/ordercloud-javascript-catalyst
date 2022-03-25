@@ -7,7 +7,7 @@ npm i @ordercloud/catalyst
 ```
 
 ## Webhook Verification
-Protect your webhook routes by blocking requests that are not from OrderCloud. [**next.js** example](./examples/next-js/pages/api/checkout/ordercalculate.ts#L10)  [**express.js** example](./examples/express-js/src/checkoutIntegrationRoutes.ts#L14)
+Protect your webhook API routes by blocking requests that are not from OrderCloud. [**next.js** example](./examples/next-js/pages/api/checkout/ordercalculate.ts#L10)  [**express.js** example](./examples/express-js/src/checkoutIntegrationRoutes.ts#L14)
 
 #### Usage
 
@@ -24,8 +24,31 @@ router.post('api/webhooks/shippingRates',
   withOcWebhookAuth(shippingRatesHandler)
 );
 
-function shippingRatesHandler(req, res, next) { }
+function shippingRatesHandler(req, res, next) { ... }
 ```
+
+## User Verification
+
+Protect your API routes by using OrderCloud's user authentication - require an OrderCloud token with correct permissions. 
+
+#### Usage 
+
+```js
+router.post('api/checkout/payment',
+  // Verifies the request contains an active OrderCloud bearer token with the "Shopper" role and user type "Buyer".
+  withOcUserAuth(createPaymentHandler, ["Shopper"], ["Buyer"])
+)
+
+function createPaymentHandler(req, res, next) { ... }
+
+router.get('api/me',
+  // rolesWithAccess parameter and typesWithAccess parameter are optional. This will give access to any active OC token.
+  withOcUserAuth(getMeHandler)
+)
+
+function getMeHandler(req, res, next) { ... }
+```
+
 ## Error Handling
 Create custom errors that will result in JSON responses matching OrderCloud's format. [**next.js** example](./examples/next-js/pages/api/checkout/ordercalculate.ts#L8)  [**express.js** example](./examples/express-js/src/app.ts#L33)
 
