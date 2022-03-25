@@ -1,8 +1,8 @@
 import axios from "axios";
 var jwt = require('jsonwebtoken');
 var getPem = require('rsa-pem-from-mod-exp');
-import { MeUser, PublicKey } from "ordercloud-javascript-sdk";
-import { InsufficientRolesError, UnauthorizedError } from "../Errors/ErrorExtensions";
+import { CommerceRole, MeUser, PublicKey } from "ordercloud-javascript-sdk";
+import { InsufficientRolesError, InvalidUserTypeError, UnauthorizedError } from "../Errors/ErrorExtensions";
 import { throwError, withOcErrorHandler } from "../Errors/OCErrorResponse";
 import { ApiHandler } from "../Types/ApiHandler";
 import { FullDecodedToken } from "../Types/ExtendedToken";
@@ -11,70 +11,58 @@ import { getHeader } from "./OCWebhookAuth";
 /**
  * @description A middleware that executes before a route handler. Same as withOCUserAuth except sends error responses instead of throwing.
  * @param {Function} routeHandler A function to handle the request and response.
- * @param {string[]} requiredRoles Optional list of OrderCloud roles. If provided, a JWT without any of these roles is not permited.
+ * @param {string[]} rolesWithAccess Optional list of OrderCloud security roles. If provided, a JWT without any of these roles is not permited.
+ * @param {CommerceRole[]} typesWithAccess Optional list of OrderCloud user types (Buyer, Seller, Supplier). If provided, a JWT without any of these roles is not permited.
  * @returns {Function} A function to handle the request and response.
  */
- export function withErrorHandledOcUserAuth(routeHandler: ApiHandler, requiredRoles: string[] = null): ApiHandler {
+ export function withErrorHandledOcUserAuth(routeHandler: ApiHandler, rolesWithAccess: string[] = null, typesWithAccess: CommerceRole[] = null): ApiHandler {
   return withOcErrorHandler(
-    withOCUserAuth(routeHandler, requiredRoles)
+    withOCUserAuth(routeHandler, rolesWithAccess, typesWithAccess)
   );
 }
-
 
 /**
  * @description A middleware that executes before a route handler. Verifies the request includes an OrderCloud bearer token with correct permissions.
  * @param {Function} req The request object.
- * @param {string[]} requiredRoles Optional list of OrderCloud roles. If provided, a JWT without any of these roles is not permited.
+ * @param {string[]} rolesWithAccess Optional list of OrderCloud security roles. If provided, a JWT without any of these roles is not permited.
+ * @param {CommerceRole[]} typesWithAccess Optional list of OrderCloud user types (Buyer, Seller, Supplier). If provided, a JWT without any of these roles is not permited.
  * @returns {Function} A function to handle the request and response.
  */
-export function withOCUserAuth(routeHandler: ApiHandler, requiredRoles: string[] = null): ApiHandler
+export function withOCUserAuth(routeHandler: ApiHandler, rolesWithAccess: string[] = null, typesWithAccess: CommerceRole[] = null): ApiHandler
 { 
   return async function(req, res, next) {
     var token = getToken(req);
-    var error = await verifyTokenAsync(token, requiredRoles);
-    if (error instanceof Error) {
-      throwError(error, next);  
+    var verficationResult = await verifyTokenAsync(token, rolesWithAccess, typesWithAccess);
+    if (verficationResult instanceof Error) {
+      throwError(verficationResult, next);  
     } else {
+      req.ocToken = verficationResult;
       await routeHandler(req, res, next);
     }
   }
 }
 
 /**
- * @description Get the authorization Bearer token from the request headers as a string
- * @param {Function} req The request object.
- * @returns {string} The JWT Bearer token
+ * @description Verifies an OrderCloud JWT is valid, unexpired, active, and has correct permissions. 
+ * @param {Function} token The raw OrderCloud JWT
+ * @param {string[]} rolesWithAccess Optional list of OrderCloud security roles. If provided, a JWT without any of these roles is not permited.
+ * @param {CommerceRole[]} typesWithAccess Optional list of OrderCloud user types (Buyer, Seller, Supplier). If provided, a JWT without any of these roles is not permited.
+ * @returns {boolean} Is valid JWT?
  */
-export function getToken(req): string {
-    var authHeader = getHeader(req, "authorization");
-
-    if (!authHeader) {
-      return null;
-    }
-
-    var parts = authHeader.split(" ");
-
-    if (parts.length != 2 || parts[0] != "Bearer") {
-      return null;
-    }
-
-    return parts[1];
-}
-
-export async function verifyTokenAsync(token: string, requiredRoles: string[] = null): Promise<Error | FullDecodedToken> {
+export async function verifyTokenAsync(token: string, rolesWithAccess: string[] = null, typesWithAccess: CommerceRole[] = null): Promise<Error | FullDecodedToken> {
   console.log(1);
 
   if (!token) {
       return new UnauthorizedError();
   }
   console.log(2);
-  var decodedToken: FullDecodedToken = decodeToken(token);
+  const decodedToken: FullDecodedToken = decodeToken(token);
   if (!decodedToken?.payload) {
       return new UnauthorizedError();
   }
   console.log(3);
 
-  var now = getTimestampUTC();
+  const now = getNowTimestampUTC();
   if (decodedToken.payload.nbf > now || now > decodedToken.payload.exp) {
       return new UnauthorizedError();
   }
@@ -92,16 +80,42 @@ export async function verifyTokenAsync(token: string, requiredRoles: string[] = 
       return new UnauthorizedError();
   }
   console.log(6);
-
-  if (requiredRoles?.length && !requiredRoles.some(role => decodedToken.payload.role.includes(role as any))) {
-      return new InsufficientRolesError({
-          SufficientRoles: requiredRoles,
-          AssignedRoles: decodedToken.payload.role as any
-      })
+  if (typesWithAccess?.length && !typesWithAccess.some(role => (decodedToken.payload.usrtype as CommerceRole).includes(role))) {
+    return new InvalidUserTypeError({
+        UserType: decodedToken.payload.usrtype,
+        UserTypesWithAccess: typesWithAccess
+    })
   }
+
   console.log(7);
 
+  if (rolesWithAccess?.length && !rolesWithAccess.some(role => decodedToken.payload.role.includes(role as any))) {
+    return new InsufficientRolesError({
+        RolesWithAccess: rolesWithAccess,
+        AssignedRoles: decodedToken.payload.role as any
+    })
+  }
+
+  console.log(8);
+
   return decodedToken; 
+}
+
+/**
+ * @description Get the authorization Bearer token from the request headers as a string
+ * @param {Function} req The request object.
+ * @returns {string | null} The JWT Bearer token
+ */
+ export function getToken(req): string | null {
+  var authHeader = getHeader(req, "authorization");
+  if (!authHeader) {
+    return null;
+  }
+  var parts = authHeader.split(" ");
+  if (parts.length != 2 || parts[0] != "Bearer") {
+    return null;
+  }
+  return parts[1];
 }
 
 async function verifyTokenWithMeGet(decodedToken: FullDecodedToken): Promise<boolean> {
@@ -111,8 +125,7 @@ async function verifyTokenWithMeGet(decodedToken: FullDecodedToken): Promise<boo
       console.log(response.data);
       return !!(response?.data?.Active);
   } catch (err) {
-    console.log(err);
-
+      console.log(err);
       return false;
   }
 }
@@ -130,7 +143,7 @@ async function verifyTokenWithKeyID(decodedToken: FullDecodedToken): Promise<boo
   }
 }
 
-export function verifyTokenWithPublicKey(accessToken: string, publicKey: PublicKey): boolean {
+function verifyTokenWithPublicKey(accessToken: string, publicKey: PublicKey): boolean {
   if (!accessToken || !publicKey?.n || !publicKey?.e) {
     return false;
   }
@@ -143,7 +156,7 @@ export function verifyTokenWithPublicKey(accessToken: string, publicKey: PublicK
   }
 }
 
-function getTimestampUTC(): number {
+function getNowTimestampUTC(): number {
   return Math.round((new Date()).getTime() / 1000);
 }
 

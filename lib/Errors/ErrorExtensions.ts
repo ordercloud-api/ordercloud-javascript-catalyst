@@ -65,8 +65,8 @@ export class MethodNotAllowedError extends CatalystBaseError {
 
 export interface InsufficientRolesData
 {
-    SufficientRoles: string[];
     AssignedRoles: string[];
+    RolesWithAccess: string[];
 }
 
 export class InsufficientRolesError extends CatalystBaseError {
@@ -81,15 +81,15 @@ export class InsufficientRolesError extends CatalystBaseError {
 }
 
 export interface InvalidUserTypeData {
-    ThisUserType: string;
-    UserTypesThatCanAccess: string[];
+    UserType: string;
+    UserTypesWithAccess: string[];
 }
 
 export class InvalidUserTypeError extends CatalystBaseError {
     constructor(data: InvalidUserTypeData) {
         super(
             "InvalidUserType",
-            `Users of type ${data.ThisUserType} do not have permission to perform this action.`,
+            `Users of type ${data.UserType} do not have permission to perform this action.`,
             StatusCodes.FORBIDDEN,
             data
         )

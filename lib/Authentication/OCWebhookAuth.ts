@@ -10,6 +10,18 @@ const hashHeader = 'x-oc-hash';
 const defaultConfigName = 'OC_WEBHOOK_HASH_KEY';
 
 /**
+ * @description A middleware that executes before a route handler. Same as withOcWebhookAuth except sends error responses instead of throwing.
+ * @param {Function} routeHandler A function to handle the request and response.
+ * @param {string} hashKey Optional. If not provided, defaults to process.env.OC_WEBHOOK_HASH_KEY.
+ * @returns {Function} A function to handle the request and response.
+ */
+ export function withErrorHandledOcWebhookAuth(routeHandler: ApiHandler, hashKey: string = null): ApiHandler {
+  return withOcErrorHandler(
+    withOcWebhookAuth(routeHandler, hashKey)
+  );
+}
+
+/**
  * @description A middleware that executes before a route handler. Verifies the request header "x-oc-hash" matches the configured hash key.
  * @param {Function} routeHandler A function to handle the request and response.
  * @param {string} hashKey Optional. If not provided, defaults to process.env.OC_WEBHOOK_HASH_KEY.
@@ -33,7 +45,8 @@ export function withOcWebhookAuth(routeHandler: ApiHandler, hashKey: string = nu
  * @param {Function} req The request object, including body and headers.
  * @param {string} hashKey Optional. If not provided, defaults to process.env.OC_WEBHOOK_HASH_KEY.
  */
-export async function isOcHashValid(req, hashKey: string | undefined = process.env[defaultConfigName]): Promise<boolean> {
+export async function isOcHashValid(req, hashKey: string = null): Promise<boolean> {
+  hashKey = hashKey || process.env[defaultConfigName];
   if (!req.rawBody) {
     // TODO - is there a way to get the body without using promises? 
     // Because making this function syncronous would mean many other downstream functions could be synchronous,
@@ -43,7 +56,7 @@ export async function isOcHashValid(req, hashKey: string | undefined = process.e
     req.body = JSON.parse(req.rawBody);
   }
 
-  const expectedHash = getHeader(req, hashHeader)
+  const expectedHash = getHeader(req, hashHeader);
 
   if (!hashKey || !expectedHash) {
     return false;
@@ -56,19 +69,8 @@ export async function isOcHashValid(req, hashKey: string | undefined = process.e
 }
 
 export function getHeader(req, headerName: string): string | null {
-  return Array.isArray(req.headers[headerName])
-    ? req.headers[headerName][0]
-    : req.headers[headerName];
+  var header = req.headers[headerName];
+  return Array.isArray(header) ? header[0]: header;
 }
 
-/**
- * @description A middleware that executes before a route handler. Same as withOcWebhookAuth except sends error responses instead of throwing.
- * @param {Function} routeHandler A function to handle the request and response.
- * @param {string} hashKey Optional. If not provided, defaults to process.env.OC_WEBHOOK_HASH_KEY.
- * @returns {Function} A function to handle the request and response.
- */
- export function withErrorHandledOcWebhookAuth(routeHandler: ApiHandler, hashKey: string = null): ApiHandler {
-  return withOcErrorHandler(
-    withOcWebhookAuth(routeHandler, hashKey)
-  );
-}
+

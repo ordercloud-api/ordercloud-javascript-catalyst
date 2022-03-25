@@ -5,6 +5,11 @@ import logger from 'morgan';
 import checkout from './checkoutIntegrationRoutes';
 import getUser from './GetUser';
 import { ocErrorResponse, NotFoundError } from '@ordercloud/catalyst';
+import { Configuration } from 'ordercloud-javascript-sdk';
+
+Configuration.Set({
+  baseApiUrl: "https://sandboxapi.ordercloud.io"
+});
 
 // This file sets up the express server.
 
@@ -32,7 +37,10 @@ app.use('', getUser);
 app.use(() => { throw new NotFoundError() });
 
 // Global error handling. Converts thrown Error objects into standardized json repsonses. 
-app.use((err, req, res, next) => ocErrorResponse(err, res));
+app.use((err, req, res, next) => {
+  console.log("here");
+  ocErrorResponse(err, res)
+});
 
 // start the Express server
 app.listen( port, () => {
