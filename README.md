@@ -34,19 +34,21 @@ Protect your API routes by using OrderCloud's user authentication - require an O
 #### Usage 
 
 ```js
+import { withOCUserAuth, FullDecodedToken } from '@ordercloud/catalyst';
+
 router.post('api/checkout/payment',
   // Verifies the request contains an active OrderCloud bearer token with the "Shopper" role and user type "Buyer".
   withOcUserAuth(createPaymentHandler, ["Shopper"], ["Buyer"])
 )
 
-function createPaymentHandler(req, res, next) { ... }
+function createPaymentHandler(req, res, next) { 
+  // req.ocToken property has been added by withOcUserAuth.
+  var token: FullDecodedToken = req.ocToken;
+  ...
+}
 
-router.get('api/me',
-  // The permissions parameters are optional. This will give access to any active OC token.
-  withOcUserAuth(getMeHandler)
-)
-
-function getMeHandler(req, res, next) { ... }
+// The permissions parameters are optional. This will give access to any active OC token. Not recommended for most routes.
+router.get('api/me', withOcUserAuth(getMeHandler));
 ```
 
 ## Error Handling
