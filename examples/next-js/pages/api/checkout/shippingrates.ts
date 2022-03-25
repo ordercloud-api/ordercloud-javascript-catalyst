@@ -3,14 +3,13 @@ import { OrderCalculatePayload, withOcErrorHandler, withOcWebhookAuth } from "@o
 import { ShipEstimateResponse } from "ordercloud-javascript-sdk";
 import { NextApiRequestTyped } from "../../../Types/NextApiRequestTyped";
 
-export default 
-  // withOcErrorHandler catches thrown errors and formats them matching OrderCloud.
-  withOcErrorHandler(
-    // withOCWebhookAuth verfies the header "x-oc-hash" matches the hashKey
-    withOcWebhookAuth(
-      shippingRatesHandler, process.env.OC_WEBHOOK_HASH_KEY
-    )
-  );
+// withOcErrorHandler catches thrown errors and formats them matching OrderCloud.
+export default withOcErrorHandler(
+  // Verfies the header "x-oc-hash" matches the provided hashKey
+  withOcWebhookAuth(
+    shippingRatesHandler, process.env.OC_WEBHOOK_HASH_KEY
+  )
+);
 
 // Exporting this config allows access the raw, unparsed http body, which is needed for hash validation.
 // withOCWebhookAuth will populate req.body with the parsed body object so it can be used in the route handler.

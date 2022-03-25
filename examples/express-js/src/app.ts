@@ -3,7 +3,13 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import checkout from './checkoutIntegrationRoutes';
-import { ocErrorResponse, NotFoundError } from '@ordercloud/catalyst';
+import getUser from './getUser';
+import { respondWithOcFormatError, NotFoundError } from '@ordercloud/catalyst';
+import { Configuration } from 'ordercloud-javascript-sdk';
+
+Configuration.Set({
+  baseApiUrl: "https://sandboxapi.ordercloud.io"
+});
 
 // This file sets up the express server.
 
@@ -24,13 +30,14 @@ app.use(express.urlencoded({ extended: false, verify: rawBodySaver }));
 app.use(cookieParser());
 
 app.use('/api/checkout', checkout);
+app.use('', getUser);
 
 // Since this is the last non-error-handling
 // middleware used, we assume 404, as nothing else responded.
 app.use(() => { throw new NotFoundError() });
 
 // Global error handling. Converts thrown Error objects into standardized json repsonses. 
-app.use((err, req, res, next) => ocErrorResponse(err, res));
+app.use((err, req, res, next) => respondWithOcFormatError(err, res));
 
 // start the Express server
 app.listen( port, () => {

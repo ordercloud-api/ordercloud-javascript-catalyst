@@ -1,1 +1,1 @@
-export type ApiHander = (req: any, res: any, next?: any) => void | Promise<void>;
+export type ApiHandler = (req: any, res: any, next?: any) => void | Promise<void>;

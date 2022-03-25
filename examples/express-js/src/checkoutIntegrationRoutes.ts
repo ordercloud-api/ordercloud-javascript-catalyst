@@ -1,5 +1,5 @@
 import express from 'express';
-import { OrderCalculateResponse, OrderSubmitResponse, ShipEstimateResponse,  } from 'ordercloud-javascript-sdk';
+import { Me, OrderCalculateResponse, OrderSubmitResponse, ShipEstimateResponse,  } from 'ordercloud-javascript-sdk';
 import { withOcWebhookAuth, OrderCalculatePayload } from '@ordercloud/catalyst';
 
 export interface RequestBody<T> extends Express.Request {

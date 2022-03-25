@@ -11,6 +11,7 @@ export interface ApiError {
 }
 
 export class CatalystBaseError extends Error {
+    isCatalystBaseError = true;
     status: StatusCodes;
     data: any;
 
@@ -32,7 +33,7 @@ export class WebhookUnauthorizedError extends CatalystBaseError {
     }
 }
 
-export class UnauthorizedException extends CatalystBaseError {
+export class UnauthorizedError extends CatalystBaseError {
     constructor() {
         super(
             "InvalidToken",
@@ -58,6 +59,39 @@ export class MethodNotAllowedError extends CatalystBaseError {
             "MethodNotAllowed",
             `Method ${method} Not Allowed`,
             StatusCodes.METHOD_NOT_ALLOWED
+        )
+    }
+}
+
+export interface InsufficientRolesData
+{
+    AssignedRoles: string[];
+    RolesWithAccess: string[];
+}
+
+export class InsufficientRolesError extends CatalystBaseError {
+    constructor(data: InsufficientRolesData) {
+        super(
+            "InsufficientRoles",
+            "User does not have role(s) required to perform this action.",
+            StatusCodes.FORBIDDEN,
+            data
+        )
+    }
+}
+
+export interface InvalidUserTypeData {
+    UserType: string;
+    UserTypesWithAccess: string[];
+}
+
+export class InvalidUserTypeError extends CatalystBaseError {
+    constructor(data: InvalidUserTypeData) {
+        super(
+            "InvalidUserType",
+            `Users of type ${data.UserType} do not have permission to perform this action.`,
+            StatusCodes.FORBIDDEN,
+            data
         )
     }
 }

@@ -1,19 +1,16 @@
-import { OrderCalculatePayload, withOcErrorHandler, withOcWebhookAuth } from '@ordercloud/catalyst';
+import { OrderCalculatePayload, withErrorHandledOcWebhookAuth } from '@ordercloud/catalyst';
 import type { NextApiResponse } from 'next'
 import { OrderCalculateResponse } from 'ordercloud-javascript-sdk';
 import { NextApiRequestTyped } from '../../../Types/NextApiRequestTyped';
 
-export default 
-  // withOcErrorHandler catches thrown errors and formats them matching OrderCloud.
-  withOcErrorHandler(
-    // withOCWebhookAuth verfies the header "x-oc-hash" matches the hashKey
-    withOcWebhookAuth(
-      orderCalculateHandler, process.env.OC_WEBHOOK_HASH_KEY
-    )
-  );
+// Verfies the header "x-oc-hash" matches the provided hashKey
+// use withOcWebhookAuth() if you want to catch errors yourself. See shippingrates.ts.
+export default withErrorHandledOcWebhookAuth(
+  orderCalculateHandler, process.env.OC_WEBHOOK_HASH_KEY
+);
 
 // Exporting this config allows access the raw, unparsed http body, which is needed for hash validation.
-// withOCWebhookAuth will populate req.body with the parsed body object so it can be used in the route handler.
+// withOCWebhookAuth() will populate req.body with the parsed body object so it can be used in the route handler.
 export const config = {
   api: {
     bodyParser: false,
