@@ -3,7 +3,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import checkout from './checkoutIntegrationRoutes';
-import getUser from './GetUser';
+import getUser from './getUser';
 import { ocErrorResponse, NotFoundError } from '@ordercloud/catalyst';
 import { Configuration } from 'ordercloud-javascript-sdk';
 
