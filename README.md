@@ -7,7 +7,7 @@ npm i @ordercloud/catalyst
 ```
 
 ## Webhook Verification
-Protect your webhook routes by blocking requests that are not from OrderCloud. 
+Protect your webhook API routes by blocking requests that are not from OrderCloud. 
 
 [**next.js** example](./examples/next-js/pages/api/checkout/ordercalculate.ts#L10)  
 
@@ -28,7 +28,7 @@ router.post('api/webhooks/shippingRates',
   withOcWebhookAuth(shippingRatesHandler)
 );
 
-function shippingRatesHandler(req, res, next) { }
+function shippingRatesHandler(req, res, next) { ... }
 ```
 
 ## User Verification
@@ -59,6 +59,8 @@ function createPaymentHandler(req, res, next) {
 router.get('api/me', withOcUserAuth(getMeHandler));
 ```
 
+=======
+>>>>>>> main
 ## Error Handling
 Create custom errors that will result in JSON responses matching OrderCloud's format. 
 
