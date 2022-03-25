@@ -60,7 +60,6 @@ async function orderCalculateHandler(
   var orderCalculate: OrderCalculateResponse = {
     TaxTotal: 123.45
   }
-  await Me.CreateAddress({} as any);
   res.status(200).json(orderCalculate);
 }
 

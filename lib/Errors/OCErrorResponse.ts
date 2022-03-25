@@ -12,7 +12,7 @@ export function withOcErrorHandler(routeHandler: ApiHandler): ApiHandler {
     try {
       await routeHandler(req, res, next);  
     } catch (err) {
-      ocErrorResponse(err, res);
+      respondWithOcFormatError(err, res);
     } 
   };
 }
@@ -30,7 +30,7 @@ export function throwError(error: Error, next: Function) {
  * @param {Function} err An error object.
  * @param {Function} res A response object
  */
-export function ocErrorResponse(err, res): void {
+export function respondWithOcFormatError(err, res): void {
   var body: ApiErrorBody = {
     Errors: []
   };

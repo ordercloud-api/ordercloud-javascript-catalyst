@@ -50,54 +50,38 @@ export function withOCUserAuth(routeHandler: ApiHandler, rolesWithAccess: string
  * @returns {boolean} Is valid JWT?
  */
 export async function verifyTokenAsync(token: string, rolesWithAccess: string[] = null, typesWithAccess: CommerceRole[] = null): Promise<Error | FullDecodedToken> {
-  console.log(1);
-
   if (!token) {
       return new UnauthorizedError();
   }
-  console.log(2);
   const decodedToken: FullDecodedToken = decodeToken(token);
   if (!decodedToken?.payload) {
       return new UnauthorizedError();
   }
-  console.log(3);
-
   const now = getNowTimestampUTC();
   if (decodedToken.payload.nbf > now || now > decodedToken.payload.exp) {
       return new UnauthorizedError();
   }
-  console.log(4);
-
   var isValid = false;
   if (decodedToken?.headers?.kid) {
     isValid = await verifyTokenWithKeyID(decodedToken);
   } else {
     isValid = await verifyTokenWithMeGet(decodedToken);
   }
-  console.log(5);
-
   if (!isValid) {
       return new UnauthorizedError();
   }
-  console.log(6);
   if (typesWithAccess?.length && !typesWithAccess.some(role => (decodedToken.payload.usrtype as CommerceRole).includes(role))) {
     return new InvalidUserTypeError({
         UserType: decodedToken.payload.usrtype,
         UserTypesWithAccess: typesWithAccess
     })
   }
-
-  console.log(7);
-
   if (rolesWithAccess?.length && !rolesWithAccess.some(role => decodedToken.payload.role.includes(role as any))) {
     return new InsufficientRolesError({
         RolesWithAccess: rolesWithAccess,
         AssignedRoles: decodedToken.payload.role as any
     })
   }
-
-  console.log(8);
-
   return decodedToken; 
 }
 
@@ -122,10 +106,8 @@ async function verifyTokenWithMeGet(decodedToken: FullDecodedToken): Promise<boo
   try {
       var url = `${decodedToken.payload.aud}/v1/me`;
       var response = await axios.get<MeUser>(url, { headers: { authorization: `Bearer ${decodedToken.raw}` } });
-      console.log(response.data);
       return !!(response?.data?.Active);
   } catch (err) {
-      console.log(err);
       return false;
   }
 }
@@ -134,11 +116,8 @@ async function verifyTokenWithKeyID(decodedToken: FullDecodedToken): Promise<boo
   try {
       var url = `${decodedToken.payload.aud}/oauth/certs/${decodedToken.headers.kid}`;
       var response = await axios.get<PublicKey>(url, { headers: { authorization: `Bearer ${decodedToken.raw}` } });
-      console.log(response.data);
       return verifyTokenWithPublicKey(decodedToken.raw, response?.data)
   } catch (err) {
-    console.log(err);
-
       return false;
   }
 }

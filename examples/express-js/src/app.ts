@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import checkout from './checkoutIntegrationRoutes';
 import getUser from './getUser';
-import { ocErrorResponse, NotFoundError } from '@ordercloud/catalyst';
+import { respondWithOcFormatError, NotFoundError } from '@ordercloud/catalyst';
 import { Configuration } from 'ordercloud-javascript-sdk';
 
 Configuration.Set({
@@ -37,10 +37,7 @@ app.use('', getUser);
 app.use(() => { throw new NotFoundError() });
 
 // Global error handling. Converts thrown Error objects into standardized json repsonses. 
-app.use((err, req, res, next) => {
-  console.log("here");
-  ocErrorResponse(err, res)
-});
+app.use((err, req, res, next) => respondWithOcFormatError(err, res));
 
 // start the Express server
 app.listen( port, () => {
