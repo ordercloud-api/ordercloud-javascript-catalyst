@@ -1,25 +1,49 @@
-import { Configuration, DecodedToken, Me } from "ordercloud-javascript-sdk";
-import { InsufficientRolesError, InvalidUserTypeError, UnauthorizedError, WrongEnvironmentError } from "../Errors/ErrorExtensions";
-import { getHeader, throwError } from "./OCWebhookAuth";
+import axios from "axios";
+var jwt = require('jsonwebtoken');
+var getPem = require('rsa-pem-from-mod-exp');
+import { MeUser, PublicKey } from "ordercloud-javascript-sdk";
+import { InsufficientRolesError, UnauthorizedError } from "../Errors/ErrorExtensions";
+import { throwError, withOcErrorHandler } from "../Errors/OCErrorResponse";
+import { ApiHandler } from "../Types/ApiHandler";
+import { FullDecodedToken } from "../Types/ExtendedToken";
+import { getHeader } from "./OCWebhookAuth";
 
-export function withOCUserAuth(routeHandler: (req, res, next) => void | Promise<void>, requiredRoles: string[] = null): 
-  (req, res, next) => void | Promise<void>
+/**
+ * @description A middleware that executes before a route handler. Same as withOCUserAuth except sends error responses instead of throwing.
+ * @param {Function} routeHandler A function to handle the request and response.
+ * @param {string[]} requiredRoles Optional list of OrderCloud roles. If provided, a JWT without any of these roles is not permited.
+ * @returns {Function} A function to handle the request and response.
+ */
+ export function withErrorHandledOcUserAuth(routeHandler: ApiHandler, requiredRoles: string[] = null): ApiHandler {
+  return withOcErrorHandler(
+    withOCUserAuth(routeHandler, requiredRoles)
+  );
+}
+
+
+/**
+ * @description A middleware that executes before a route handler. Verifies the request includes an OrderCloud bearer token with correct permissions.
+ * @param {Function} req The request object.
+ * @param {string[]} requiredRoles Optional list of OrderCloud roles. If provided, a JWT without any of these roles is not permited.
+ * @returns {Function} A function to handle the request and response.
+ */
+export function withOCUserAuth(routeHandler: ApiHandler, requiredRoles: string[] = null): ApiHandler
 { 
   return async function(req, res, next) {
     var token = getToken(req);
-    console.log(token);
     var error = await verifyTokenAsync(token, requiredRoles);
     if (error instanceof Error) {
       throwError(error, next);  
     } else {
-      routeHandler(req, res, next);
+      await routeHandler(req, res, next);
     }
   }
 }
 
 /**
- * @description Get the OrderCloud OAuth json web token from the request as a raw string.
+ * @description Get the authorization Bearer token from the request headers as a string
  * @param {Function} req The request object.
+ * @returns {string} The JWT Bearer token
  */
 export function getToken(req): string {
     var authHeader = getHeader(req, "authorization");
@@ -37,65 +61,85 @@ export function getToken(req): string {
     return parts[1];
 }
 
-export async function verifyTokenAsync(token: string, requiredRoles: string[] = null): Promise<Error | DecodedToken> {
+export async function verifyTokenAsync(token: string, requiredRoles: string[] = null): Promise<Error | FullDecodedToken> {
+  console.log(1);
+
   if (!token) {
       return new UnauthorizedError();
   }
-
-  var decodedToken: DecodedToken = parseToken(token);
-  if (!decodedToken) {
+  console.log(2);
+  var decodedToken: FullDecodedToken = decodeToken(token);
+  if (!decodedToken?.payload) {
       return new UnauthorizedError();
   }
-
-  var now = getTimestampUTC();
-
-  if (decodedToken.nbf > now || now > decodedToken.exp) {
-      return new UnauthorizedError();
-  }
-
   console.log(3);
 
-
-  var baseUrl = Configuration.Get().baseApiUrl;
-  console.log("base", baseUrl);
-  console.log("aud", decodedToken.aud);
-  if (baseUrl !== decodedToken.aud) {
-      return new WrongEnvironmentError({
-        TokenIssuerEnvironment: decodedToken.aud,
-        ExpectedEnvironment: baseUrl
-      });
+  var now = getTimestampUTC();
+  if (decodedToken.payload.nbf > now || now > decodedToken.payload.exp) {
+      return new UnauthorizedError();
   }
-
   console.log(4);
 
+  var isValid = false;
+  if (decodedToken?.headers?.kid) {
+    isValid = await verifyTokenWithKeyID(decodedToken);
+  } else {
+    isValid = await verifyTokenWithMeGet(decodedToken);
+  }
+  console.log(5);
 
-  var isValid = await verifyTokenWithMeGet(token);
   if (!isValid) {
       return new UnauthorizedError();
   }
-
-  console.log(5);;
-
-
-  if (requiredRoles?.length && !requiredRoles.some(role => decodedToken.role.includes(role as any))) {
-      return new InsufficientRolesError({
-          SufficientRoles: requiredRoles,
-          AssignedRoles: decodedToken.role as any
-      })
-  }
-
   console.log(6);
 
+  if (requiredRoles?.length && !requiredRoles.some(role => decodedToken.payload.role.includes(role as any))) {
+      return new InsufficientRolesError({
+          SufficientRoles: requiredRoles,
+          AssignedRoles: decodedToken.payload.role as any
+      })
+  }
+  console.log(7);
 
   return decodedToken; 
 }
 
-async function verifyTokenWithMeGet(accessToken: string): Promise<boolean> {
+async function verifyTokenWithMeGet(decodedToken: FullDecodedToken): Promise<boolean> {
   try {
-      var meUser = await Me.Get({ accessToken });
-      return meUser && meUser.Active;
-  } catch {
+      var url = `${decodedToken.payload.aud}/v1/me`;
+      var response = await axios.get<MeUser>(url, { headers: { authorization: `Bearer ${decodedToken.raw}` } });
+      console.log(response.data);
+      return !!(response?.data?.Active);
+  } catch (err) {
+    console.log(err);
+
       return false;
+  }
+}
+
+async function verifyTokenWithKeyID(decodedToken: FullDecodedToken): Promise<boolean> {
+  try {
+      var url = `${decodedToken.payload.aud}/oauth/certs/${decodedToken.headers.kid}`;
+      var response = await axios.get<PublicKey>(url, { headers: { authorization: `Bearer ${decodedToken.raw}` } });
+      console.log(response.data);
+      return verifyTokenWithPublicKey(decodedToken.raw, response?.data)
+  } catch (err) {
+    console.log(err);
+
+      return false;
+  }
+}
+
+export function verifyTokenWithPublicKey(accessToken: string, publicKey: PublicKey): boolean {
+  if (!accessToken || !publicKey?.n || !publicKey?.e) {
+    return false;
+  }
+  try {
+    var pem = getPem(publicKey.n, publicKey.e);
+    jwt.verify(accessToken, pem, { algorithms: ['RS256'] })
+    return true;
+  } catch (err) {
+    return false;
   }
 }
 
@@ -103,31 +147,12 @@ function getTimestampUTC(): number {
   return Math.round((new Date()).getTime() / 1000);
 }
 
-
-
-// taken from https://github.com/ordercloud-api/ordercloud-javascript-sdk/blob/a72b0d0a86effcc3c26800d7ecd25beaffcc995b/src/utils/ParseJwt.ts
-// would be nice to not have duplicate functionality if this could be public.
-// not exposed publically.
-function parseToken(token: string, next = null): DecodedToken {
-    try {
-      const base64Url = token.split('.')[1]
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
-      const jsonPayload = decodeURIComponent(
-        decodeBase64(base64)
-          .split('')
-          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-          .join('')
-      )
-      return JSON.parse(jsonPayload)
-    } catch (e) {
-      return null;
-    }
-}
-
-function decodeBase64(str) {
-    // atob is defined on the browser, in node we must use buffer
-    if (typeof atob !== 'undefined') {
-      return atob(str)
-    }
-    return Buffer.from(str, 'base64').toString('binary')
+function decodeToken(token: string): FullDecodedToken {
+  var decoded = jwt.decode(token, {complete: true});
+  var extendedToken: FullDecodedToken = {
+    payload: decoded.payload,
+    headers: decoded.header,
+    raw: token
+  };
+  return extendedToken;
 }

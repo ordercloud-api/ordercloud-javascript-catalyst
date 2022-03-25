@@ -5,11 +5,6 @@ import logger from 'morgan';
 import checkout from './checkoutIntegrationRoutes';
 import getUser from './GetUser';
 import { ocErrorResponse, NotFoundError } from '@ordercloud/catalyst';
-import { Configuration } from 'ordercloud-javascript-sdk';
-
-Configuration.Set({
-  baseApiUrl: 'https://sandboxapi.ordercloud.io',
-})
 
 // This file sets up the express server.
 

@@ -11,6 +11,7 @@ export interface ApiError {
 }
 
 export class CatalystBaseError extends Error {
+    isCatalystBaseError = true;
     status: StatusCodes;
     data: any;
 
@@ -90,22 +91,6 @@ export class InvalidUserTypeError extends CatalystBaseError {
             "InvalidUserType",
             `Users of type ${data.ThisUserType} do not have permission to perform this action.`,
             StatusCodes.FORBIDDEN,
-            data
-        )
-    }
-}
-
-export interface WrongEnvironmentData {
-    TokenIssuerEnvironment: string;
-    ExpectedEnvironment: string;
-}
-
-export class WrongEnvironmentError extends CatalystBaseError {
-    constructor(data: WrongEnvironmentData) {
-        super(
-            "InvalidToken",
-            `Environment mismatch. Token gives access to ${data.TokenIssuerEnvironment} while this API expects ${data.ExpectedEnvironment}`,
-            StatusCodes.UNAUTHORIZED,
             data
         )
     }

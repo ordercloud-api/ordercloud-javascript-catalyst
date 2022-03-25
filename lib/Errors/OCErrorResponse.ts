@@ -1,14 +1,13 @@
 import { StatusCodes } from "http-status-codes";
-import { OrderCloudError } from "ordercloud-javascript-sdk";
-import { ApiHander } from "../Types/ApiHandler";
-import { ApiErrorBody, CatalystBaseError } from "./ErrorExtensions";
+import { ApiHandler } from "../Types/ApiHandler";
+import { ApiErrorBody } from "./ErrorExtensions";
 
 /**
  * @description A middleware that executes before a route handler. Catches thrown errors executes a JSON response matching OrderCloud's format.
  * @param {Function} routeHandler A function to handle the request and response.
  * @returns {Function} A function to handle the request and response.
  */
-export function withOcErrorHandler(routeHandler: ApiHander): ApiHander {
+export function withOcErrorHandler(routeHandler: ApiHandler): ApiHandler {
   return async (req, res, next) => { 
     try {
       await routeHandler(req, res, next);  
@@ -16,6 +15,14 @@ export function withOcErrorHandler(routeHandler: ApiHander): ApiHander {
       ocErrorResponse(err, res);
     } 
   };
+}
+
+export function throwError(error: Error, next: Function) {
+  if (next) {
+    next(error)
+  } else {
+    throw error;
+  }
 }
 
 /**
@@ -27,13 +34,13 @@ export function ocErrorResponse(err, res): void {
   var body: ApiErrorBody = {
     Errors: []
   };
-  if (err instanceof CatalystBaseError) {
+  if (err.isCatalystBaseError) {
       body.Errors[0] = {
           ErrorCode: err.name,
           Message: err.message,
           Data: err.data,
       };
-  } else if (err instanceof OrderCloudError || err.isOrderCloudError) {
+  } else if (err.isOrderCloudError) {
       body = err.errors;
   } else {
       body.Errors[0] = {
