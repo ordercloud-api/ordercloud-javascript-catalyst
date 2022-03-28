@@ -140,12 +140,11 @@ export async function verifyTokenAsync(token: string, rolesWithAccess: string[] 
 async function verifyTokenWithMeGet(decodedToken: FullDecodedToken): Promise<boolean> {
   try {
       var cacheKey = decodedToken.raw;
-      var me = await GetOrAddToCache<MeUser>(cacheKey, getMeCacheTTLSeconds, async () => {
+      return await GetOrAddToCache<boolean>(cacheKey, getMeCacheTTLSeconds, async () => {
         var url = `${decodedToken.payload.aud}/v1/me`;
         var response = await axios.get<MeUser>(url, setTokenHeader(decodedToken));
-        return response?.data; 
+        return !!(response?.data?.Active); 
       });
-      return !!(me?.Active);
   } catch (err) {
       return false;
   }
