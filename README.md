@@ -50,7 +50,8 @@ router.post('api/checkout/payment',
   withOcUserAuth(createPaymentHandler, ["Shopper"], ["Buyer"], ["xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"])
 )
 
-// Permits tokens with any roles and user type. However, process.env.OC_API_CLIENTS_WITH_ACCESS must be defined (comma-separated). 
+// Permission parameters are options. A token with any roles and user type can access this. 
+// However, process.env.OC_API_CLIENTS_WITH_ACCESS must be defined (comma-separated). 
 router.post('api/checkout/payment', withOcUserAuth(createPaymentHandler)) 
 
 // Permits tokens with any roles, user type, and client ID. Not recomended for normal uses.
@@ -61,9 +62,6 @@ function createPaymentHandler(req, res, next) {
   var token: FullDecodedToken = req.ocToken;
   ...
 }
-
-// The permissions parameters are optional. This will give access to any active OC token. Not recommended for most routes.
-router.get('api/me', withOcUserAuth(getMeHandler));
 ```
 
 ## Error Handling
