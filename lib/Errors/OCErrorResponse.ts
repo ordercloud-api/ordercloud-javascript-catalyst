@@ -17,17 +17,9 @@ export function withOcErrorHandler(routeHandler: ApiHandler): ApiHandler {
   };
 }
 
-export function throwError(error: Error, next: Function) {
-  if (next) {
-    next(error)
-  } else {
-    throw error;
-  }
-}
-
 /**
  * @description Converts an error object to a JSON response matching OrderCloud's format 
- * @param {Function} err An error object.
+ * @param {Error} err An error object.
  * @param {Function} res A response object
  */
 export function respondWithOcFormatError(err, res): void {
@@ -50,6 +42,6 @@ export function respondWithOcFormatError(err, res): void {
       };
   }
 
-    // return a json error response. 500 is considered a bug in your api.
-    res.status(err.status || StatusCodes.INTERNAL_SERVER_ERROR).json(body);
+  // return a json error response. 500 is considered a bug in your api.
+  res.status(err.status || StatusCodes.INTERNAL_SERVER_ERROR).json(body);
 };

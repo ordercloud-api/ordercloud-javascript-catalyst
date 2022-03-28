@@ -9,7 +9,7 @@ export interface RequestBody<T> extends Express.Request {
 var router = express.Router();
 
 router.post('/shippingRates', 
-  // withOCWebhookAuth is a middleware that executes before the route handler.
+  // withOcWebhookAuth() is a middleware that executes before the route handler.
   // It verifies the request header "x-oc-hash" matches the provided hashKey.
   withOcWebhookAuth(shippingRatesHandler, process.env.OC_WEBHOOK_HASH_KEY)
 );

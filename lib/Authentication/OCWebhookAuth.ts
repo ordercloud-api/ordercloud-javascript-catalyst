@@ -1,16 +1,17 @@
 var crypto = require('crypto-js');
 import getRawBody from 'raw-body';
 import { WebhookUnauthorizedError } from '../Errors/ErrorExtensions';
-import { throwError, withOcErrorHandler } from '../Errors/OCErrorResponse';
+import { withOcErrorHandler } from '../Errors/OCErrorResponse';
+import { getHeader, throwError } from '../Helpers';
 import { ApiHandler } from '../Types/ApiHandler';
 
 // Defined globaly by the OrderCloud platform
 const hashHeader = 'x-oc-hash';
 // A convention defined by this project.
-const defaultConfigName = 'OC_WEBHOOK_HASH_KEY';
+const webhookHashKeyEnvVar = 'OC_WEBHOOK_HASH_KEY';
 
 /**
- * @description A middleware that executes before a route handler. Same as withOcWebhookAuth except sends error responses instead of throwing.
+ * @description A middleware that executes before a route handler. Same as `withOcWebhookAuth()` except sends error responses instead of throwing.
  * @param {Function} routeHandler A function to handle the request and response.
  * @param {string} hashKey Optional. If not provided, defaults to process.env.OC_WEBHOOK_HASH_KEY.
  * @returns {Function} A function to handle the request and response.
@@ -29,7 +30,7 @@ const defaultConfigName = 'OC_WEBHOOK_HASH_KEY';
  */
 export function withOcWebhookAuth(routeHandler: ApiHandler, hashKey: string = null) : ApiHandler
 {
-    hashKey = hashKey || process.env[defaultConfigName];
+    hashKey = hashKey || process.env[webhookHashKeyEnvVar];
     return async function(req, res, next) {
         var isValid = await isOcHashValid(req, hashKey);
         if (isValid) {
@@ -46,7 +47,7 @@ export function withOcWebhookAuth(routeHandler: ApiHandler, hashKey: string = nu
  * @param {string} hashKey Optional. If not provided, defaults to process.env.OC_WEBHOOK_HASH_KEY.
  */
 export async function isOcHashValid(req, hashKey: string = null): Promise<boolean> {
-  hashKey = hashKey || process.env[defaultConfigName];
+  hashKey = hashKey || process.env[webhookHashKeyEnvVar];
   if (!req.rawBody) {
     // TODO - is there a way to get the body without using promises? 
     // Because making this function syncronous would mean many other downstream functions could be synchronous,
@@ -67,10 +68,4 @@ export async function isOcHashValid(req, hashKey: string = null): Promise<boolea
   
   return hash === expectedHash;
 }
-
-export function getHeader(req, headerName: string): string | null {
-  var header = req.headers[headerName];
-  return Array.isArray(header) ? header[0]: header;
-}
-
 

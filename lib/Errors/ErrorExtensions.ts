@@ -1,13 +1,13 @@
 import { StatusCodes } from "http-status-codes";
 
-export interface ApiErrorBody {
-    Errors: ApiError[];
-}
-
 export interface ApiError {
     ErrorCode: string;
     Message: string,
     Data?: any
+}
+
+export interface ApiErrorBody {
+    Errors: ApiError[];
 }
 
 export class CatalystBaseError extends Error {

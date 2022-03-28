@@ -12,7 +12,7 @@ export default withOcErrorHandler(
 );
 
 // Exporting this config allows access the raw, unparsed http body, which is needed for hash validation.
-// withOCWebhookAuth will populate req.body with the parsed body object so it can be used in the route handler.
+// withOcWebhookAuth() will populate req.body with the parsed body object so it can be used in the route handler.
 export const config = {
   api: {
     bodyParser: false,
