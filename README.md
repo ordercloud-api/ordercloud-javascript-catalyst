@@ -54,7 +54,7 @@ router.post('api/checkout/payment',
 // However, process.env.OC_API_CLIENTS_WITH_ACCESS must be defined (comma-separated). 
 router.post('api/checkout/payment', withOcUserAuth(createPaymentHandler)) 
 
-// Permits tokens with any roles, user type, and client ID. Not recomended for normal uses.
+// Same as above except the "*" character gives access to any client ID. This can be a serious security hole, so only do if you understand the consequences. 
 router.post('api/checkout/payment', withOcUserAuth(createPaymentHandler, [], [], ["*"])) 
 
 function createPaymentHandler(req, res, next) { 
