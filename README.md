@@ -50,7 +50,7 @@ router.post('api/checkout/payment',
   withOcUserAuth(createPaymentHandler, ["Shopper"], ["Buyer"], ["xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"])
 )
 
-// Permission parameters are options. A token with any roles and user type can access this. 
+// Permission parameters are optional. A token with any roles and user type can access this. 
 // However, process.env.OC_API_CLIENTS_WITH_ACCESS must be defined (comma-separated). 
 router.post('api/checkout/payment', withOcUserAuth(createPaymentHandler)) 
 
