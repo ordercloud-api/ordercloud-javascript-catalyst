@@ -55,7 +55,7 @@ router.post('api/checkout/payment',
 router.post('api/checkout/payment', withOcUserAuth(createPaymentHandler)) 
 
 // Same as above except the "*" character gives access to any client ID. 
-// This can be a serious security hole, so only do if you understand the consequences. 
+// This can be a serious security hole, so only use if you understand the consequences. 
 router.post('api/checkout/payment', withOcUserAuth(createPaymentHandler, [], [], ["*"])) 
 
 function createPaymentHandler(req, res, next) { 
