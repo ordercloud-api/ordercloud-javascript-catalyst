@@ -1,6 +1,8 @@
 # ordercloud-javascript-catalyst
 Starter middleware, extensions, and tools for building APIs when working with OrderCloud.
 
+:warning: This library should be considered in a beta version. Its feature set is complete, but is still in need of community feedback.
+
 ## Installation
 ```
 npm i @ordercloud/catalyst
