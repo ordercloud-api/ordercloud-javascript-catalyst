@@ -30,7 +30,7 @@ router.post('api/webhooks/shippingRates',
   withOcWebhookAuth(shippingRatesHandler)
 );
 
-function shippingRatesHandler(req, res, next) { ... }
+function async shippingRatesHandler(req, res, next) { ... }
 ```
 
 ## User Verification
@@ -60,7 +60,7 @@ router.post('api/checkout/payment', withOcUserAuth(createPaymentHandler))
 // This can be a serious security hole, so only use if you understand the consequences. 
 router.post('api/checkout/payment', withOcUserAuth(createPaymentHandler, [], [], ["*"])) 
 
-function createPaymentHandler(req, res, next) { 
+function async createPaymentHandler(req, res, next) { 
   // req.ocToken property has been added by withOcUserAuth.
   var token: FullDecodedToken = req.ocToken;
   ...
