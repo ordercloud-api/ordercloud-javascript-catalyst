@@ -94,12 +94,13 @@ if (!acceptedCardTypes.includes(type)) {
 ## Integration Interfaces
 Make your integration with a 3rd party API less tightly coupled by inserting an interface which you know works with multiple providers. 
 
-- [`ICreditCardProcessor`](.lib/Types/Integrations/Interfaces/ICreditCardProcessor.ts)
-- [`ICreditCardSaver`](.lib/Types/Integrations/Interfaces/ICreditCardSaver.ts)
-- [`IShippingRatesCalculator`](.lib/Types/Integrations/Interfaces/IShippingRatesCalculator.ts)
-- [`ITaxCalculator`](.lib/Types/Integrations/Interfaces/ITaxCalculator.ts)
-- [`ITaxCodeProvider`](.lib/Types/Integrations/Interfaces/ITaxCodeProvider.ts)
-- [`ISingleEmailSender`](.lib/Types/Integrations/Interfaces/ISingleEmailSender.ts)
+- [`ICreditCardProcessor`](./lib/Types/Integrations/Interfaces/ICreditCardProcessor.ts)
+- [`ICreditCardSaver`](./lib/Types/Integrations/Interfaces/ICreditCardSaver.ts)
+- [`IShippingRatesCalculator`](./lib/Types/Integrations/Interfaces/IShippingRatesCalculator.ts)
+- [`ITaxCalculator`](./lib/Types/Integrations/Interfaces/ITaxCalculator.ts)
+- [`ITaxCodeProvider`](./lib/Types/Integrations/Interfaces/ITaxCodeProvider.ts)
+- [`ISingleEmailSender`](./lib/Types/Integrations/Interfaces/ISingleEmailSender.ts)
 
-
+These originated from the C# version of this library. There, you can find multiple implementations for these interfaces. 
+[https://github.com/ordercloud-api/ordercloud-dotnet-catalyst#3rd-party-integrations](https://github.com/ordercloud-api/ordercloud-dotnet-catalyst#3rd-party-integrations)
 
