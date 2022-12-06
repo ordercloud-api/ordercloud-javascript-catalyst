@@ -91,5 +91,15 @@ if (!acceptedCardTypes.includes(type)) {
 }
 ```
 
+## Integration Interfaces
+Make your integration with a 3rd party API less tightly coupled by inserting an interface which you know works with multiple providers. 
+
+- [`ICreditCardProcessor`](.lib/Types/Integrations/Interfaces/ICreditCardProcessor.ts)
+- [`ICreditCardSaver`](.lib/Types/Integrations/Interfaces/ICreditCardSaver.ts)
+- [`IShippingRatesCalculator`](.lib/Types/Integrations/Interfaces/IShippingRatesCalculator.ts)
+- [`ITaxCalculator`](.lib/Types/Integrations/Interfaces/ITaxCalculator.ts)
+- [`ITaxCodeProvider`](.lib/Types/Integrations/Interfaces/ITaxCodeProvider.ts)
+- [`ISingleEmailSender`](.lib/Types/Integrations/Interfaces/ISingleEmailSender.ts)
+
 
 
